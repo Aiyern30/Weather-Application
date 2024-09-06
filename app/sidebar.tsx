@@ -21,6 +21,8 @@ const Sidebar = () => {
 
   const navigation = [
     { icon: <FaHome size={20} />, name: "Home", href: "/" },
+    { icon: <FaHome size={20} />, name: "Statistics", href: "/Statistics" },
+    { icon: <FaHome size={20} />, name: "Maps", href: "/Maps" },
     { icon: <FaCog size={20} />, name: "Settings", href: "/settings" },
     { icon: <FaSignOutAlt size={20} />, name: "Logout", href: "/logout" },
   ];
