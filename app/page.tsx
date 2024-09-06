@@ -62,6 +62,8 @@ export default function Home() {
 
   console.log("weatherData", weatherData);
   const [searchQuery, setSearchQuery] = useState("");
+  console.log("searchQuery", searchQuery);
+
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null);
   const [error, setError] = useState<string | null>(null);
