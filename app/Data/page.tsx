@@ -1,20 +1,3 @@
-// "use client";
-
-// import Header from "@/components/pages/Header";
-// import { AirQuality, WeatherApiResponse } from "@/type/types";
-// import React, { useEffect, useState } from "react";
-
-// const Page = () => {
-//   return (
-//     <div className="h-screen w-full">
-//       <Header />
-//       <div></div>
-//     </div>
-//   );
-// };
-
-// export default Page;
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -62,7 +45,7 @@ export default function Home() {
       try {
         // Fetch weather data
         const weatherResponse = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
+          `http://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
         );
         if (!weatherResponse.ok) throw new Error("Location not found");
 
@@ -109,7 +92,7 @@ export default function Home() {
       try {
         // Fetch current weather
         const currentResponse = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${query}&aqi=yes`
+          `http://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${query}&aqi=yes`
         );
         if (!currentResponse.ok) throw new Error("Location not found");
 
@@ -117,7 +100,7 @@ export default function Home() {
 
         // Fetch forecast weather
         const forecastResponse = await fetch(
-          `https://api.weatherapi.com/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${query}&days=1&aqi=yes&alerts=no`
+          `http://api.weatherapi.com/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${query}&days=1&aqi=yes&alerts=no`
         );
         if (!forecastResponse.ok) throw new Error("Location not found");
 
@@ -162,7 +145,7 @@ export default function Home() {
       if (query.length < 3) return; // Only search after 3 characters
       try {
         const response = await fetch(
-          `https://api.weatherapi.com/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
+          `http://api.weatherapi.com/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
         );
         const data = await response.json();
         setSuggestions(data.map((item: any) => item.name));
