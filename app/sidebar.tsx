@@ -4,7 +4,15 @@ import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { FaHome, FaCog, FaSignOutAlt, FaSun, FaMoon } from "react-icons/fa";
+import {
+  FaHome,
+  FaCog,
+  FaSignOutAlt,
+  FaSun,
+  FaMoon,
+  FaChartPie,
+  FaMapMarked,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 
@@ -21,8 +29,8 @@ const Sidebar = () => {
 
   const navigation = [
     { icon: <FaHome size={20} />, name: "Home", href: "/" },
-    { icon: <FaHome size={20} />, name: "Statistics", href: "/Statistics" },
-    { icon: <FaHome size={20} />, name: "Maps", href: "/Maps" },
+    { icon: <FaChartPie size={20} />, name: "Statistics", href: "/Statistics" },
+    { icon: <FaMapMarked size={20} />, name: "Maps", href: "/Maps" },
     { icon: <FaCog size={20} />, name: "Settings", href: "/settings" },
     { icon: <FaSignOutAlt size={20} />, name: "Logout", href: "/logout" },
   ];
@@ -51,7 +59,7 @@ const Sidebar = () => {
             open ? "block" : "hidden"
           }`}
         >
-          Weather Forecast
+          Breezy Forecast
         </motion.span>
         <motion.span
           initial={{ opacity: 1 }}
@@ -62,7 +70,7 @@ const Sidebar = () => {
             !open ? "block" : "hidden"
           }`}
         >
-          WF
+          BF
         </motion.span>
       </div>
 

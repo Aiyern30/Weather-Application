@@ -153,7 +153,7 @@ export interface Forecast {
 
 // Interface for the entire weather API response
 export interface WeatherApiResponse {
-  location: Location;
+  location?: Location;
   current: CurrentWeather;
   forecast: Forecast;
 }

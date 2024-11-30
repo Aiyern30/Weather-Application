@@ -32,17 +32,25 @@ import {
 } from "@/components/ui";
 import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
+import Header from "@/components/Header";
+import { useLocation } from "@/components/locationContext";
+import { fetchImageUrl, fetchWeatherDataForCountry } from "@/lib/fetchData";
 
 export default function Home() {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
+  if (!WEATHER_API_URL) {
+    throw new Error("WEATHER_API_URL is not defined");
+  }
   const UNSPLASH_API_URL = process.env.NEXT_PUBLIC_UNSPLASH_API_URL;
+  if (!UNSPLASH_API_URL) {
+    throw new Error("UNSPLASH_API_URL is not defined");
+  }
+  const { location } = useLocation();
 
-  const [location, setLocation] = useState("Malaysia");
   const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(
     null
   );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [locationImage, setLocationImage] = useState<string | null>(null);
@@ -59,56 +67,9 @@ export default function Home() {
     Japan: { weather: null, imageUrl: null },
   });
 
-  // Fetch weather data and image for multiple countries
-  useEffect(() => {
-    const fetchWeatherDataForCountry = async (country: string) => {
-      try {
-        // Fetch weather data
-        const weatherResponse = await fetch(
-          `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
-        );
-        if (!weatherResponse.ok) throw new Error("Location not found");
-
-        const weatherData: WeatherApiResponse = await weatherResponse.json();
-
-        // Fetch image URL
-        const imageUrl = await fetchImageUrl(country);
-
-        setAdditionalWeatherData((prevData) => ({
-          ...prevData,
-          [country]: { weather: weatherData, imageUrl: imageUrl || null },
-        }));
-      } catch (error) {
-        console.error(`Error fetching weather data for ${country}:`, error);
-        setAdditionalWeatherData((prevData) => ({
-          ...prevData,
-          [country]: { weather: null, imageUrl: null },
-        }));
-      }
-    };
-
-    // Fetch data for all countries
-    const countries = ["South Korea", "China", "United States", "Japan"];
-    countries.forEach((country) => fetchWeatherDataForCountry(country));
-  }, []);
-
-  // Fetch image URL from Unsplash
-  const fetchImageUrl = async (query: string): Promise<string | null> => {
-    try {
-      const response = await fetch(
-        `${UNSPLASH_API_URL}/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=1`
-      );
-      const data = await response.json();
-      return data.results[0]?.urls?.regular || null;
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      return null;
-    }
-  };
-
   // Fetch weather data based on location
   useEffect(() => {
-    const fetchWeatherData = async (query: string) => {
+    const fetchAllWeatherData = async (query: string) => {
       try {
         // Fetch current weather
         const currentResponse = await fetch(
@@ -131,6 +92,7 @@ export default function Home() {
 
         // Set weather data with forecast data and image
         setWeatherData({ ...currentData, forecast: forecastData.forecast });
+
         setAirQuality(currentData.current.air_quality);
         setLocationImage(imageUrl);
         setError(null);
@@ -143,7 +105,37 @@ export default function Home() {
       }
     };
 
-    fetchWeatherData(location);
+    fetchAllWeatherData(location);
+
+    const fetchWeatherDataForCountries = async (
+      country: string,
+      WEATHER_API_URL: string
+    ) => {
+      try {
+        const response = await fetchWeatherDataForCountry(
+          country,
+          WEATHER_API_URL
+        );
+        if (response) {
+          // Fetch image URL
+          const imageUrl = await fetchImageUrl(country, UNSPLASH_API_URL);
+
+          setAdditionalWeatherData((prevData) => ({
+            ...prevData,
+            [country]: { weather: weatherData, imageUrl: imageUrl || null },
+          }));
+        }
+      } catch (error) {
+        setAdditionalWeatherData((prevData) => ({
+          ...prevData,
+          [country]: { weather: null, imageUrl: null },
+        }));
+      }
+    };
+    const countries = ["South Korea", "China", "United States", "Japan"];
+    countries.forEach((country) =>
+      fetchWeatherDataForCountries(country, WEATHER_API_URL)
+    );
   }, [location]);
 
   // Fetch image from Unsplash with Axios
@@ -159,134 +151,9 @@ export default function Home() {
     }
   };
 
-  // Fetch location suggestions
-  useEffect(() => {
-    const fetchSuggestions = async (query: string) => {
-      if (query.length < 3) return; // Only search after 3 characters
-      try {
-        const response = await fetch(
-          `${WEATHER_API_URL}/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
-        );
-        const data = await response.json();
-        setSuggestions(data.map((item: any) => item.name));
-      } catch (error) {
-        console.error("Error fetching location suggestions:", error);
-        setSuggestions([]);
-      }
-    };
-
-    fetchSuggestions(searchQuery);
-  }, [searchQuery]);
-
-  // Handle location selection
-  const handleSelectLocation = (location: string) => {
-    setLocation(location);
-    setSearchQuery("");
-    setSuggestions([]);
-  };
-
-  // Handle search button click
-  const handleSearch = () => {
-    if (searchQuery.trim() !== "") {
-      setLocation(searchQuery);
-    }
-  };
-
   return (
     <div className="h-screen w-full">
-      <div className="p-5 border-b border-gray-300 flex flex-col md:flex-row items-center">
-        <div className="p-5 border-gray-300 flex flex-col md:flex-row items-center w-full">
-          {/* Today Overview Section */}
-          <div className="flex flex-col mb-4 md:mb-0 w-full md:w-1/2">
-            <span className="text-2xl font-bold font-title">
-              Today Overview
-            </span>
-            <span className="text-sm text-gray-500 mt-1">
-              {error ? (
-                <div className="text-red-500">{error}</div>
-              ) : weatherData ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 font-body">
-                  {[
-                    {
-                      src: "/Weather/time.gif",
-                      label: "Time",
-                      value: weatherData.location?.localtime || "N/A",
-                    },
-                    {
-                      src: "/Weather/Region.gif",
-                      label: "Timezone",
-                      value: weatherData.location?.tz_id || "N/A",
-                    },
-                    {
-                      src: "/Weather/City.gif",
-                      label: "Location",
-                      value:
-                        `${weatherData.location?.name}, ${weatherData.location?.region}, ${weatherData.location?.country}` ||
-                        "N/A",
-                    },
-                    {
-                      src: "/Weather/Location.gif",
-                      label: "Coordinates",
-                      value:
-                        `(${weatherData.location?.lat}°, ${weatherData.location?.lon}°)` ||
-                        "N/A",
-                    },
-                  ].map(({ src, label, value }) => (
-                    <div key={label} className="flex items-center">
-                      <Avatar>
-                        <AvatarImage src={src} alt={label} />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                      <span className="ml-2">
-                        <span className="font-body font-semibold">
-                          {label}:{" "}
-                        </span>
-                        <span className="font-number">{value}</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                "Fetching..."
-              )}
-            </span>
-          </div>
-
-          {/* Search Section */}
-          <div className="flex flex-col md:flex-row w-full md:w-1/2 gap-2 relative items-center">
-            <Input
-              type="text"
-              className="w-full sm:w-full md:w-auto font-body"
-              placeholder="Search Your Location"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-            />
-            <button
-              onClick={handleSearch}
-              className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded text-sm md:text-base"
-            >
-              Search
-            </button>
-
-            {/* Location suggestions dropdown */}
-            {suggestions.length > 0 && (
-              <div className="absolute top-full mt-2 w-full sm:w-full md:w-auto bg-white border border-gray-300 shadow-lg rounded z-10">
-                {suggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-sm"
-                    onClick={() => handleSelectLocation(suggestion)}
-                  >
-                    {suggestion}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+      <Header />
       <div className="p-5">
         <div className="col-span-full sm:col-span-2 lg:col-span-3 h-auto border border-gray-300 flex flex-col lg:flex-row items-center lg:items-start justify-center p-4 space-y-4 lg:space-y-0 lg:space-x-4">
           {/* Weather Icon Section */}
@@ -302,7 +169,6 @@ export default function Home() {
               <div className="text-gray-500">No weather data available</div>
             )}
           </div>
-
           {/* Container for Weather Details and Image */}
           <div className="flex flex-col lg:flex-row flex-grow w-full space-y-4 lg:space-y-0 lg:space-x-4">
             {/* Weather Details Section */}
