@@ -34,8 +34,12 @@ import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/locationContext";
-import { fetchImageUrl, fetchWeatherDataForCountry } from "@/lib/fetchData";
-
+type CountryWeatherData = {
+  current: any;
+  forecast: any;
+  airQuality: any;
+  imageUrl: string | null;
+};
 export default function Home() {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
@@ -56,43 +60,30 @@ export default function Home() {
   const [locationImage, setLocationImage] = useState<string | null>(null);
 
   const [additionalWeatherData, setAdditionalWeatherData] = useState<
-    Record<
-      string,
-      { weather: WeatherApiResponse | null; imageUrl: string | null }
-    >
-  >({
-    "South Korea": { weather: null, imageUrl: null },
-    China: { weather: null, imageUrl: null },
-    "United States": { weather: null, imageUrl: null },
-    Japan: { weather: null, imageUrl: null },
-  });
+    Record<string, CountryWeatherData>
+  >({});
+
+  console.log("additionalWeatherData", additionalWeatherData);
 
   // Fetch weather data based on location
   useEffect(() => {
     const fetchAllWeatherData = async (query: string) => {
       try {
-        // Fetch current weather
         const currentResponse = await fetch(
           `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${query}&aqi=yes`
         );
         if (!currentResponse.ok) throw new Error("Location not found");
-
         const currentData: WeatherApiResponse = await currentResponse.json();
 
-        // Fetch forecast weather
         const forecastResponse = await fetch(
           `${WEATHER_API_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${query}&days=1&aqi=yes&alerts=no`
         );
         if (!forecastResponse.ok) throw new Error("Location not found");
-
         const forecastData = await forecastResponse.json();
 
-        // Fetch image from Unsplash
         const imageUrl = await fetchUnsplashImage(query);
 
-        // Set weather data with forecast data and image
         setWeatherData({ ...currentData, forecast: forecastData.forecast });
-
         setAirQuality(currentData.current.air_quality);
         setLocationImage(imageUrl);
         setError(null);
@@ -105,37 +96,57 @@ export default function Home() {
       }
     };
 
-    fetchAllWeatherData(location);
-
-    const fetchWeatherDataForCountries = async (
-      country: string,
-      WEATHER_API_URL: string
-    ) => {
+    const fetchWeatherDataForCountries = async (country: string) => {
       try {
-        const response = await fetchWeatherDataForCountry(
-          country,
-          WEATHER_API_URL
+        const currentResponse = await fetch(
+          `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
         );
-        if (response) {
-          // Fetch image URL
-          const imageUrl = await fetchImageUrl(country, UNSPLASH_API_URL);
+        if (!currentResponse.ok) throw new Error("Location not found");
+        const currentData = await currentResponse.json();
 
-          setAdditionalWeatherData((prevData) => ({
-            ...prevData,
-            [country]: { weather: weatherData, imageUrl: imageUrl || null },
-          }));
-        }
-      } catch (error) {
+        const forecastResponse = await fetch(
+          `${WEATHER_API_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${country}&days=1&aqi=yes&alerts=no`
+        );
+        if (!forecastResponse.ok) throw new Error("Forecast not found");
+        const forecastData = await forecastResponse.json();
+
+        const imageUrl = await fetchUnsplashImage(country);
+
+        // Store current, forecast, air quality, and image
         setAdditionalWeatherData((prevData) => ({
           ...prevData,
-          [country]: { weather: null, imageUrl: null },
+          [country]: {
+            current: currentData.current,
+            forecast: forecastData.forecast,
+            airQuality: currentData.current.air_quality,
+            imageUrl: imageUrl || null,
+          },
+        }));
+      } catch (error) {
+        console.error(`Error fetching weather for ${country}:`, error);
+        setAdditionalWeatherData((prevData) => ({
+          ...prevData,
+          [country]: {
+            current: null,
+            forecast: null,
+            airQuality: null,
+            imageUrl: null,
+          },
         }));
       }
     };
-    const countries = ["South Korea", "China", "United States", "Japan"];
-    countries.forEach((country) =>
-      fetchWeatherDataForCountries(country, WEATHER_API_URL)
-    );
+
+    fetchAllWeatherData(location);
+
+    const countries = [
+      "South Korea",
+      "China",
+      "United States",
+      "Japan",
+      "Singapore",
+      "France",
+    ];
+    countries.forEach((country) => fetchWeatherDataForCountries(country));
   }, [location]);
 
   // Fetch image from Unsplash with Axios
@@ -309,13 +320,13 @@ export default function Home() {
               </div>
               <div className="flex flex-col items-center justify-center h-full w-full bg-black bg-opacity-40 p-4">
                 <div className="text-white text-xl font-bold">
-                  {data.weather?.current.temp_c}°C
+                  {data.current.temp_c}°C
                 </div>
                 <div className="text-white text-sm mt-1">
-                  UV Index: {data.weather?.current.uv}
+                  UV Index: {data.current.uv}
                 </div>
                 <div className="text-white text-sm mt-1">
-                  Humidity: {data.weather?.current.humidity}%
+                  Humidity: {data.current.humidity}%
                 </div>
               </div>
             </div>
