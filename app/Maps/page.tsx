@@ -24,7 +24,7 @@ const Page = () => {
   const fetchCoordinates = async (location: string) => {
     try {
       const response = await fetch(
-        `http://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${location}&aqi=yes`
+        `https://api.weatherapi.com/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${location}&aqi=yes`
       );
       const data = await response.json();
 
@@ -44,7 +44,7 @@ const Page = () => {
     // Replace with your own logic to fetch location suggestions
     try {
       const response = await fetch(
-        `http://api.weatherapi.com/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
+        `https://api.weatherapi.com/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
       );
       const data = await response.json();
       const suggestions = data.map((item: any) => item.name); // Adjust based on API response structure
