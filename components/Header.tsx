@@ -208,11 +208,11 @@ const Header = () => {
 
           {/* Location suggestions dropdown */}
           {suggestions.length > 0 && (
-            <div className="absolute top-full mt-2 w-full sm:w-full md:w-auto bg-white border border-gray-300 shadow-lg rounded z-10">
+            <div className="absolute top-full mt-2 w-full sm:w-full md:w-auto  shadow-lg rounded z-10">
               {suggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-sm"
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 cursor-pointer text-sm dark:bg-[#2D2D2D] hover:dark:bg-gray-800 z-50"
                   onClick={() => handleSelectLocation(suggestion)}
                 >
                   {suggestion}
