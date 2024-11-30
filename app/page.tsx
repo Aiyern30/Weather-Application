@@ -34,7 +34,8 @@ import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
 
 export default function Home() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
+  const UNSPLASH_API_URL = process.env.NEXT_PUBLIC_UNSPLASH_API_URL;
 
   const [location, setLocation] = useState("Malaysia");
   const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(
@@ -64,7 +65,7 @@ export default function Home() {
       try {
         // Fetch weather data
         const weatherResponse = await fetch(
-          `${API_BASE_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
+          `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
         );
         if (!weatherResponse.ok) throw new Error("Location not found");
 
@@ -95,7 +96,7 @@ export default function Home() {
   const fetchImageUrl = async (query: string): Promise<string | null> => {
     try {
       const response = await fetch(
-        `http://api.unsplash.com/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=1`
+        `${UNSPLASH_API_URL}/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}&per_page=1`
       );
       const data = await response.json();
       return data.results[0]?.urls?.regular || null;
@@ -111,7 +112,7 @@ export default function Home() {
       try {
         // Fetch current weather
         const currentResponse = await fetch(
-          `${API_BASE_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${query}&aqi=yes`
+          `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${query}&aqi=yes`
         );
         if (!currentResponse.ok) throw new Error("Location not found");
 
@@ -119,7 +120,7 @@ export default function Home() {
 
         // Fetch forecast weather
         const forecastResponse = await fetch(
-          `${API_BASE_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${query}&days=1&aqi=yes&alerts=no`
+          `${WEATHER_API_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${query}&days=1&aqi=yes&alerts=no`
         );
         if (!forecastResponse.ok) throw new Error("Location not found");
 
@@ -149,7 +150,7 @@ export default function Home() {
   const fetchUnsplashImage = async (query: string) => {
     try {
       const response = await axios.get(
-        `http://api.unsplash.com/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`
+        `${UNSPLASH_API_URL}/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`
       );
       return response.data.results[0]?.urls?.regular || null;
     } catch (error) {
@@ -164,7 +165,7 @@ export default function Home() {
       if (query.length < 3) return; // Only search after 3 characters
       try {
         const response = await fetch(
-          `${API_BASE_URL}/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
+          `${WEATHER_API_URL}/v1/search.json?key=f1250c5c92844d20a8d104804240104&q=${query}`
         );
         const data = await response.json();
         setSuggestions(data.map((item: any) => item.name));
