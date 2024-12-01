@@ -27,7 +27,7 @@ interface WeatherIconProps {
 
 // Define weather categories and their codes
 const weatherCategories: { [key: string]: number[] } = {
-  sunny: [1000, 1003, 1009], // Clear, partly cloudy
+  sunny: [1000, 1003, 1006, 1009], // Clear, partly cloudy
   rain: [1063, 1180, 1183, 1186, 1189, 1192, 1195, 1240, 1243, 1246], // Rain and showers
   snow: [1066, 1114, 1210, 1213, 1216, 1219, 1222, 1225, 1255, 1258], // Snow
   thunder: [1087, 1273, 1276, 1279, 1282], // Thunderstorms
