@@ -1,20 +1,3 @@
-// "use client";
-
-// import Header from "@/components/pages/Header";
-// import { AirQuality, WeatherApiResponse } from "@/type/types";
-// import React, { useEffect, useState } from "react";
-
-// const Page = () => {
-//   return (
-//     <div className="h-screen w-full">
-//       <Header />
-//       <div></div>
-//     </div>
-//   );
-// };
-
-// export default Page;
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -34,6 +17,7 @@ import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/locationContext";
+import { useRouter } from "next/navigation";
 type CountryWeatherData = {
   current: any;
   forecast: any;
@@ -49,7 +33,7 @@ export default function Home() {
   if (!UNSPLASH_API_URL) {
     throw new Error("UNSPLASH_API_URL is not defined");
   }
-  const { location } = useLocation();
+  const { location, setLocation } = useLocation();
 
   const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(
     null
@@ -63,8 +47,7 @@ export default function Home() {
     Record<string, CountryWeatherData>
   >({});
 
-  console.log("additionalWeatherData", additionalWeatherData);
-
+  const router = useRouter();
   // Fetch weather data based on location
   useEffect(() => {
     const fetchAllWeatherData = async (query: string) => {
@@ -313,6 +296,10 @@ export default function Home() {
                 backgroundImage: `url(${data.imageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+              }}
+              onClick={() => {
+                router.push(`/Statistics/`);
+                setLocation(country);
               }}
             >
               <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">

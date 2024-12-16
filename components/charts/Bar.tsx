@@ -9,7 +9,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
 } from "chart.js";
 
 // Register necessary Chart.js components
@@ -23,37 +22,23 @@ ChartJS.register(
 );
 
 interface BarChartProps {
-  headers: string[];
-  datasets: string[];
+  data: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor?: string;
+      borderColor?: string;
+      borderWidth?: number;
+    }[];
+  };
+  options?: Record<string, any>;
+  width?: number;
+  height?: number;
 }
 
-const BarChart = ({
-  data,
-}: {
-  data: { time: string; feelslike_c: number }[];
-}) => {
-  const chartData = {
-    labels: data.map((item) => item.time),
-    datasets: [
-      {
-        label: "Feels Like Temperature (°C)",
-        data: data.map((item) => item.feelslike_c),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    scales: {
-      x: { title: { display: true, text: "Time" } },
-      y: { title: { display: true, text: "Feels Like (°C)" } },
-    },
-  };
-
-  return <Bar data={chartData} options={options} />;
+const BarChart = ({ data, options, width, height }: BarChartProps) => {
+  return <Bar data={data} options={options} width={width} height={height} />;
 };
 
 export default BarChart;
