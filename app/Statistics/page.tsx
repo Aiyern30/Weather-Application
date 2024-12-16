@@ -1,6 +1,7 @@
 "use client";
 
 import BarChart from "@/components/charts/Bar";
+import LineChart from "@/components/charts/Line";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/locationContext";
 import { fetchForecastWeather } from "@/lib/fetchData";
@@ -54,7 +55,7 @@ const Statistics = () => {
       }
     };
     fetchAllForecastWeather();
-  }, [location]);
+  }, [WEATHER_API_URL, location]);
 
   // Separate chart data for different parameters
   const chartDataFeelsLike = {
@@ -118,6 +119,19 @@ const Statistics = () => {
     },
   };
 
+  const chartDataHeatIndex = {
+    labels: hourlyData.map((item) => formatTime(item.time)),
+    datasets: [
+      {
+        label: "Heat (c)",
+        data: hourlyData.map((item) => item.heatindex_c),
+        backgroundColor: "rgba(153, 102, 255, 0.6)",
+        borderColor: "rgba(153, 102, 255, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <div className="h-screen w-full">
       <Header />
@@ -150,6 +164,12 @@ const Statistics = () => {
                     data={chartDataPrecipitation}
                     options={chartOptions}
                   />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Heat Index</div>
+                <div className="h-[300px]">
+                  <LineChart data={chartDataHeatIndex} />
                 </div>
               </div>
             </div>
