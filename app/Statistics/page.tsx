@@ -19,9 +19,15 @@ import { Day, Hour, WeatherApiResponse } from "@/type/types";
 import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
 import { useDegree } from "@/components/context/TemperatureContext";
-import { PrecipitationUnit, PressureUnit, Temperature } from "@/type/symbol";
+import {
+  DistanceUnit,
+  PrecipitationUnit,
+  PressureUnit,
+  Temperature,
+} from "@/type/symbol";
 import { usePressure } from "@/components/context/PressureContext";
-import { usePrecipitation } from "@/components/context/PrecipitationUnit";
+import { usePrecipitation } from "@/components/context/PrecipitationContext";
+import { useDistance } from "@/components/context/DistanceContext";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
@@ -33,6 +39,7 @@ const Statistics = () => {
   const { degree, setDegree } = useDegree();
   const { pressure, setPressure } = usePressure();
   const { precipitation, setPrecipitation } = usePrecipitation();
+  const { distance, setDistance } = useDistance();
   const [forecastData, setForecastData] = useState<WeatherApiResponse | null>(
     null
   );
@@ -107,7 +114,10 @@ const Statistics = () => {
     degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f"
   );
 
-  const chartDataWindSpeed = generateChartData("Wind Speed (mph)", "wind_mph");
+  const chartDataWindSpeed = generateChartData(
+    distance === DistanceUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
+    distance === DistanceUnit.MPH ? "wind_mph" : "wind_kph"
+  );
 
   const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
 
@@ -162,6 +172,17 @@ const Statistics = () => {
             }}
           >
             {degree}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              distance === DistanceUnit.MPH
+                ? setDistance(DistanceUnit.KPH)
+                : setDistance(DistanceUnit.MPH);
+            }}
+          >
+            {distance}
           </Button>
 
           <Button
