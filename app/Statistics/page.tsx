@@ -53,15 +53,7 @@ const Statistics = () => {
   );
   const [hourlyData, setHourlyData] = useState<Hour[]>([]);
   const [chartType, setChartType] = useState<chartTypes>("BAR");
-  const chartTypes: chartTypes[] = [
-    "AREA",
-    "BAR",
-    "BUBBLE",
-    "DOUGHNUT",
-    "LINE",
-    "POLAR",
-    "RADAR",
-  ];
+  console.log("chartType", chartType);
 
   useEffect(() => {
     const fetchAllForecastWeather = async () => {
@@ -110,8 +102,17 @@ const Statistics = () => {
     isDarkTheme: boolean
   ) => {
     const colors = isDarkTheme
-      ? generateRandomColor({ darkMode: true }) // Generate darker colors for dark theme
-      : generateRandomColor({ darkMode: false }); // Generate lighter colors for light theme
+      ? generateRandomColor({ darkMode: true }) // Darker colors for dark theme
+      : generateRandomColor({ darkMode: false }); // Lighter colors for light theme
+
+    const fillConfig =
+      chartType === "AREA"
+        ? {
+            target: "origin",
+            above: colors.backgroundColor,
+            below: colors.backgroundColor,
+          }
+        : false;
 
     return {
       labels: hourlyData.map((item) => formatTime(item.time)),
@@ -122,6 +123,7 @@ const Statistics = () => {
           backgroundColor: colors.backgroundColor,
           borderColor: colors.borderColor,
           borderWidth: 1,
+          fill: fillConfig,
         },
       ],
     };
@@ -262,7 +264,7 @@ const Statistics = () => {
     <div className="h-screen w-full">
       <Header />
       <div className="p-5">
-        <SubHeader />
+        <SubHeader chartType={chartType} setChartType={setChartType} />
 
         {forecastData && (
           <div
