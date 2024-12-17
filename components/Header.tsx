@@ -147,7 +147,7 @@ const Header = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 font-body">
                 {[
                   {
-                    src: "/Weather/time.gif",
+                    src: "/Weather/Time.gif",
                     label: "Time",
                     value: weatherData.location?.localtime || "N/A",
                   },
