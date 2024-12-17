@@ -2,6 +2,7 @@ import { chartTypes } from "@/type/chartTypes";
 import React from "react";
 import BarChart from "./Bar";
 import LineChart from "./Line";
+import AreaChart from "./Area";
 
 interface chartRenderProps {
   chartType: chartTypes;
@@ -17,6 +18,7 @@ const ChartRenderer: React.FC<chartRenderProps> = ({
   const chartMap: { [key: string]: React.ReactNode } = {
     BAR: <BarChart data={data} options={options} />,
     LINE: <LineChart data={data} options={options} />,
+    AREA: <AreaChart data={data} options={options} />,
   };
 
   return chartMap[chartType] || <BarChart data={data} options={options} />;

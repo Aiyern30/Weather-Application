@@ -21,8 +21,12 @@ import {
 } from "./ui";
 import React, { useState } from "react";
 
-const SubHeader = () => {
-  const [chartType, setChartType] = useState<chartTypes>("BAR");
+interface SubHeaderProps {
+  setChartType: React.Dispatch<React.SetStateAction<chartTypes>>;
+  chartType: chartTypes;
+}
+
+const SubHeader = ({ chartType, setChartType }: SubHeaderProps) => {
   const chartTypes: chartTypes[] = [
     "AREA",
     "BAR",
