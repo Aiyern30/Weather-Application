@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "./sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LocationProvider } from "@/components/context/locationContext";
+import { DegreeProvider } from "@/components/context/degreeFahrenheitContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,8 +28,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LocationProvider>
-            <Sidebar />
-            <div className="flex-1 overflow-auto">{children}</div>
+            <DegreeProvider>
+              <Sidebar />
+              <div className="flex-1 overflow-auto">{children}</div>
+            </DegreeProvider>
           </LocationProvider>
         </ThemeProvider>
       </body>

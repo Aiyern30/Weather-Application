@@ -6,6 +6,7 @@ import LineChart from "@/components/charts/Line";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/context/locationContext";
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
@@ -17,6 +18,8 @@ import { chartTypes } from "@/type/chartTypes";
 import { Day, Hour, WeatherApiResponse } from "@/type/types";
 import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
+import { useDegree } from "@/components/context/degreeFahrenheitContext";
+import { Temperature } from "@/type/symbol";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
@@ -25,11 +28,12 @@ const Statistics = () => {
   }
 
   const { location } = useLocation();
+  const { degree, setDegree } = useDegree();
   const [forecastData, setForecastData] = useState<WeatherApiResponse | null>(
     null
   );
   const [hourlyData, setHourlyData] = useState<Hour[]>([]);
-  const [chartType, setChartType] = useState<chartTypes>("LINE");
+  const [chartType, setChartType] = useState<chartTypes>("BAR");
   const chartTypes: chartTypes[] = [
     "AREA",
     "BAR",
@@ -93,8 +97,10 @@ const Statistics = () => {
   };
 
   const chartDataFeelsLike = generateChartData(
-    "Feels Like Temperature (°C)",
-    "feelslike_c"
+    degree === Temperature.DEGREE
+      ? "Feels Like Temperature (°C)"
+      : "Feels Like Temperature (°F)",
+    degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f"
   );
 
   const chartDataWindSpeed = generateChartData("Wind Speed (mph)", "wind_mph");
@@ -107,11 +113,23 @@ const Statistics = () => {
     "Precipitation (mm)",
     "precip_mm"
   );
-  const chartDataCloud = generateChartData("Cloud", "cloud");
-  const chartDataWindChill = generateChartData("Wind Chill", "windchill_c");
-  const chartDataDewpoint = generateChartData("Dew Point (°C)", "dewpoint_c");
 
-  const chartDataHeatIndex = generateChartData("Heat (°C)", "heatindex_c");
+  const chartDataCloud = generateChartData("Cloud", "cloud");
+
+  const chartDataWindChill = generateChartData(
+    degree === Temperature.DEGREE ? "Wind Chill (°C)" : "Wind Chill (°F)",
+    degree === Temperature.DEGREE ? "windchill_c" : "windchill_f"
+  );
+
+  const chartDataDewpoint = generateChartData(
+    degree === Temperature.DEGREE ? "Dew Point (°C)" : "Dew Point (°F)",
+    degree === Temperature.DEGREE ? "dewpoint_c" : "dewpoint_f"
+  );
+
+  const chartDataHeatIndex = generateChartData(
+    degree === Temperature.DEGREE ? "Heat (°C)" : "Heat (°F)",
+    degree === Temperature.DEGREE ? "heatindex_c" : "heatindex_f"
+  );
 
   const chartOptions = {
     responsive: true,
@@ -125,8 +143,20 @@ const Statistics = () => {
     <div className="h-screen w-full">
       <Header />
       <div className="p-5">
-        <div className="flex justify-end m-3">
+        <div className="flex justify-end items-center m-3">
+          <Button
+            variant="outline"
+            onClick={() => {
+              degree === Temperature.DEGREE
+                ? setDegree(Temperature.FAHRENHEIT)
+                : setDegree(Temperature.DEGREE);
+            }}
+          >
+            {degree}
+          </Button>
+
           <Select
+            value={chartType}
             onValueChange={(value: chartTypes) => {
               setChartType(value);
             }}
