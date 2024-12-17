@@ -13,7 +13,7 @@ const DistanceContext = createContext<DistanceContextProps | undefined>(
 );
 
 export const DistanceProvider = ({ children }: { children: ReactNode }) => {
-  const [distance, setDistance] = useState<DistanceUnit>(DistanceUnit.MPH);
+  const [distance, setDistance] = useState<DistanceUnit>(DistanceUnit.KM);
   return (
     <DistanceContext.Provider value={{ distance, setDistance }}>
       {children}

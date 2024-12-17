@@ -20,14 +20,16 @@ import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
 import { useDegree } from "@/components/context/TemperatureContext";
 import {
-  DistanceUnit,
+  SpeedUnit,
   PrecipitationUnit,
   PressureUnit,
   Temperature,
+  DistanceUnit,
 } from "@/type/symbol";
 import { usePressure } from "@/components/context/PressureContext";
 import { usePrecipitation } from "@/components/context/PrecipitationContext";
 import { useDistance } from "@/components/context/DistanceContext";
+import { useSpeed } from "@/components/context/SpeedContext";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
@@ -37,6 +39,7 @@ const Statistics = () => {
 
   const { location } = useLocation();
   const { degree, setDegree } = useDegree();
+  const { speed, setSpeed } = useSpeed();
   const { pressure, setPressure } = usePressure();
   const { precipitation, setPrecipitation } = usePrecipitation();
   const { distance, setDistance } = useDistance();
@@ -64,6 +67,7 @@ const Statistics = () => {
         const allHours = response.forecast.forecastday.flatMap((day: any) =>
           day.hour.map((hour: Hour) => ({
             time: hour.time,
+            feelslike_f: hour.feelslike_f,
             feelslike_c: hour.feelslike_c,
             wind_mph: hour.wind_mph,
             wind_kph: hour.wind_kph,
@@ -74,7 +78,6 @@ const Statistics = () => {
             snow_cm: hour.snow_cm,
             humidity: hour.humidity,
             cloud: hour.cloud,
-            feelslike_f: hour.feelslike_f,
             windchill_c: hour.windchill_c,
             windchill_f: hour.windchill_f,
             heatindex_c: hour.heatindex_c,
@@ -82,6 +85,11 @@ const Statistics = () => {
             dewpoint_c: hour.dewpoint_c,
             dewpoint_f: hour.dewpoint_f,
             will_it_rain: hour.will_it_rain,
+            vis_km: hour.vis_km,
+            vis_miles: hour.vis_km,
+            uv: hour.uv,
+            gust_mph: hour.gust_mph,
+            gust_kph: hour.gust_kph,
             chance_of_rain: hour.chance_of_rain,
           }))
         );
@@ -115,8 +123,12 @@ const Statistics = () => {
   );
 
   const chartDataWindSpeed = generateChartData(
-    distance === DistanceUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
-    distance === DistanceUnit.MPH ? "wind_mph" : "wind_kph"
+    distance === SpeedUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
+    distance === SpeedUnit.MPH ? "wind_mph" : "wind_kph"
+  );
+  const chartDataGustSpeed = generateChartData(
+    distance === SpeedUnit.MPH ? "Gust Speed (mph)" : "Gust Speed (kph)",
+    distance === SpeedUnit.MPH ? "gust_mph" : "gust_kph"
   );
 
   const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
@@ -177,9 +189,20 @@ const Statistics = () => {
           <Button
             variant="outline"
             onClick={() => {
-              distance === DistanceUnit.MPH
-                ? setDistance(DistanceUnit.KPH)
-                : setDistance(DistanceUnit.MPH);
+              speed === SpeedUnit.MPH
+                ? setSpeed(SpeedUnit.KPH)
+                : setSpeed(SpeedUnit.MPH);
+            }}
+          >
+            {speed}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              distance === DistanceUnit.KM
+                ? setDistance(DistanceUnit.MILES)
+                : setDistance(DistanceUnit.KM);
             }}
           >
             {distance}
@@ -244,6 +267,16 @@ const Statistics = () => {
                   <ChartRenderer
                     chartType={chartType}
                     data={chartDataWindSpeed}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Gust Speed</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataGustSpeed}
                     options={chartOptions}
                   />
                 </div>

@@ -8,6 +8,7 @@ import { DegreeProvider } from "@/components/context/TemperatureContext";
 import { PressureProvider } from "@/components/context/PressureContext";
 import { PrecipitationProvider } from "@/components/context/PrecipitationContext";
 import { DistanceProvider } from "@/components/context/DistanceContext";
+import { SpeedProvider } from "@/components/context/SpeedContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,8 +36,10 @@ export default function RootLayout({
               <PressureProvider>
                 <PrecipitationProvider>
                   <DistanceProvider>
-                    <Sidebar />
-                    <div className="flex-1 overflow-auto">{children}</div>
+                    <SpeedProvider>
+                      <Sidebar />
+                      <div className="flex-1 overflow-auto">{children}</div>
+                    </SpeedProvider>
                   </DistanceProvider>
                 </PrecipitationProvider>
               </PressureProvider>

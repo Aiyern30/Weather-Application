@@ -28,9 +28,13 @@ export enum PrecipitationUnit {
   INCH = "in", // Inches
 }
 
-export enum DistanceUnit {
+export enum SpeedUnit {
   MPH = "mph", // Miles per hour
   KPH = "kph", // Kilometers per hour
+}
+export enum DistanceUnit {
+  KM = "km",
+  MILES = "miles",
 }
 
 export enum HumidityUnit {
