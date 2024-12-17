@@ -4,7 +4,8 @@ import "./globals.css";
 import Sidebar from "./sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LocationProvider } from "@/components/context/locationContext";
-import { DegreeProvider } from "@/components/context/degreeFahrenheitContext";
+import { DegreeProvider } from "@/components/context/TemperatureContext";
+import { PressureProvider } from "@/components/context/PressureContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,8 +30,10 @@ export default function RootLayout({
         >
           <LocationProvider>
             <DegreeProvider>
-              <Sidebar />
-              <div className="flex-1 overflow-auto">{children}</div>
+              <PressureProvider>
+                <Sidebar />
+                <div className="flex-1 overflow-auto">{children}</div>
+              </PressureProvider>
             </DegreeProvider>
           </LocationProvider>
         </ThemeProvider>

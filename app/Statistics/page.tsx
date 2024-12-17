@@ -18,7 +18,7 @@ import { chartTypes } from "@/type/chartTypes";
 import { Day, Hour, WeatherApiResponse } from "@/type/types";
 import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
-import { useDegree } from "@/components/context/degreeFahrenheitContext";
+import { useDegree } from "@/components/context/TemperatureContext";
 import { Temperature } from "@/type/symbol";
 
 const Statistics = () => {
