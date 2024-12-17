@@ -33,6 +33,8 @@ import { useSpeed } from "@/components/context/SpeedContext";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { color } from "framer-motion";
+import { ChartCard } from "@/components/ChartCard";
+import SubHeader from "@/components/SubHeader";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
@@ -194,6 +196,21 @@ const Statistics = () => {
     theme === "dark"
   );
 
+  const charts = [
+    { title: "Feels Like Temperature", data: chartDataFeelsLike },
+    { title: "Wind Speed", data: chartDataWindSpeed },
+    { title: "Gust Speed", data: chartDataGustSpeed },
+    { title: "Visibility", data: chartDataVisible },
+    { title: "Humidity", data: chartDataHumidity },
+    { title: "Precipitation", data: chartDataPrecipitation },
+    { title: "Heat Index", data: chartDataHeatIndex },
+    { title: "Pressure", data: chartDataPressure },
+    { title: "Cloud", data: chartDataCloud },
+    { title: "UV Index", data: chartDataUVIndex },
+    { title: "Wind Chill", data: chartDataWindChill },
+    { title: "Dew Point", data: chartDataDewpoint },
+  ];
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -205,6 +222,7 @@ const Statistics = () => {
         },
       },
     },
+
     scales: {
       x: {
         ticks: {
@@ -244,233 +262,24 @@ const Statistics = () => {
     <div className="h-screen w-full">
       <Header />
       <div className="p-5">
-        <div className="flex justify-end items-center m-3">
-          <Button
-            variant="outline"
-            onClick={() => {
-              degree === Temperature.DEGREE
-                ? setDegree(Temperature.FAHRENHEIT)
-                : setDegree(Temperature.DEGREE);
-            }}
-          >
-            {degree}
-          </Button>
+        <SubHeader />
 
-          <Button
-            variant="outline"
-            onClick={() => {
-              speed === SpeedUnit.MPH
-                ? setSpeed(SpeedUnit.KPH)
-                : setSpeed(SpeedUnit.MPH);
-            }}
-          >
-            {speed}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              distance === DistanceUnit.KM
-                ? setDistance(DistanceUnit.MILES)
-                : setDistance(DistanceUnit.KM);
-            }}
-          >
-            {distance}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              pressure === PressureUnit.INCH
-                ? setPressure(PressureUnit.MB)
-                : setPressure(PressureUnit.INCH);
-            }}
-          >
-            {pressure}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              precipitation === PrecipitationUnit.INCH
-                ? setPrecipitation(PrecipitationUnit.MM)
-                : setPrecipitation(PrecipitationUnit.INCH);
-            }}
-          >
-            {precipitation}
-          </Button>
-
-          <Select
-            value={chartType}
-            onValueChange={(value: chartTypes) => {
-              setChartType(value);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Chart Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {chartTypes.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
         {forecastData && (
-          <>
-            <div
-              className={cn(
-                "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto"
-              )}
-            >
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Feels Like Temperature</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataFeelsLike}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Wind Speed</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataWindSpeed}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Gust Speed</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataGustSpeed}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Visibility</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataVisible}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Humidity</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataHumidity}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Precipitation</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataPrecipitation}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Heat Index</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataHeatIndex}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Pressure</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataPressure}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Cloud</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataCloud}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">UV Index</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataUVIndex}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Wind Chill</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataWindChill}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div
-                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
-              >
-                <div className="text-center mb-4">Dew Point</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataDewpoint}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-            </div>
-          </>
+          <div
+            className={cn(
+              "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto"
+            )}
+          >
+            {charts.map((chart, index) => (
+              <ChartCard
+                key={index}
+                title={chart.title}
+                chartType={chartType}
+                data={chart.data}
+                options={chartOptions}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
