@@ -1,7 +1,12 @@
 "use client";
 
-// context/LocationContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 interface LocationContextProps {
   location: string;
@@ -13,7 +18,26 @@ const LocationContext = createContext<LocationContextProps | undefined>(
 );
 
 export const LocationProvider = ({ children }: { children: ReactNode }) => {
-  const [location, setLocation] = useState("Malaysia");
+  // State to store location
+  const [location, setLocation] = useState<string>("Malaysia");
+
+  // Effect to retrieve initial location from localStorage (only on client-side)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedLocation = localStorage.getItem("location");
+      if (storedLocation) {
+        setLocation(storedLocation);
+      }
+    }
+  }, []); // Empty dependency array ensures this runs once after the initial render
+
+  // Effect to update localStorage whenever the location changes (only on client-side)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("location", location);
+    }
+  }, [location]);
+
   return (
     <LocationContext.Provider value={{ location, setLocation }}>
       {children}
