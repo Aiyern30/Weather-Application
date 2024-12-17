@@ -86,3 +86,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+.custom-select-button .p-button {
+  font-size: 12px;
+  padding: 4px 10px;
+  height: 30px;
+  min-width: 50px;
+  width: auto;
+}
+
+.custom-select-button .p-button.p-highlight {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.custom-select-button .p-button:not(.p-highlight) {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.custom-select-button .p-button:focus {
+  outline: none;
+  box-shadow: none;
+}
