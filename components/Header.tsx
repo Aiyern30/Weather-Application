@@ -9,7 +9,7 @@ import {
 import { AirQuality, CurrentWeather, WeatherApiResponse } from "@/type/types";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage, Input } from "./ui";
-import { useLocation } from "./locationContext";
+import { useLocation } from "./context/locationContext";
 
 const Header = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;

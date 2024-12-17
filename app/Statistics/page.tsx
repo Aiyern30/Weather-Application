@@ -4,7 +4,7 @@ import BarChart from "@/components/charts/Bar";
 import ChartRenderer from "@/components/charts/ChartRenderer";
 import LineChart from "@/components/charts/Line";
 import Header from "@/components/Header";
-import { useLocation } from "@/components/locationContext";
+import { useLocation } from "@/components/context/locationContext";
 import {
   Select,
   SelectContent,
@@ -101,10 +101,15 @@ const Statistics = () => {
 
   const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
 
+  const chartDataPressure = generateChartData("Pressure (in)", "pressure_in");
+
   const chartDataPrecipitation = generateChartData(
     "Precipitation (mm)",
     "precip_mm"
   );
+  const chartDataCloud = generateChartData("Cloud", "cloud");
+  const chartDataWindChill = generateChartData("Wind Chill", "windchill_c");
+  const chartDataDewpoint = generateChartData("Dew Point (°C)", "dewpoint_c");
 
   const chartDataHeatIndex = generateChartData("Heat (°C)", "heatindex_c");
 
@@ -187,6 +192,46 @@ const Statistics = () => {
                   <ChartRenderer
                     chartType={chartType}
                     data={chartDataHeatIndex}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Pressure</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataPressure}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Cloud</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataCloud}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Wind Chill</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataWindChill}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Dew Point</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataDewpoint}
                     options={chartOptions}
                   />
                 </div>

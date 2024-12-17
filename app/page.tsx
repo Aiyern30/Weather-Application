@@ -16,7 +16,7 @@ import {
 import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
 import Header from "@/components/Header";
-import { useLocation } from "@/components/locationContext";
+import { useLocation } from "@/components/context/locationContext";
 import { useRouter } from "next/navigation";
 type CountryWeatherData = {
   current: any;
