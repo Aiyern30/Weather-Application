@@ -32,13 +32,14 @@ import { useDistance } from "@/components/context/DistanceContext";
 import { useSpeed } from "@/components/context/SpeedContext";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import { color } from "framer-motion";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
     throw new Error("WEATHER_API_URL is not defined");
   }
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const { location } = useLocation();
   const { degree, setDegree } = useDegree();
   const { speed, setSpeed } = useSpeed();
@@ -196,9 +197,47 @@ const Statistics = () => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        labels: {
+          color: theme === "dark" ? "white" : "black",
+        },
+      },
+    },
     scales: {
-      x: { title: { display: true, text: "Time" } },
-      y: { title: { display: true, text: "Value" } },
+      x: {
+        ticks: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+        title: {
+          display: true,
+          text: "Time",
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+      },
+      y: {
+        ticks: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+        title: {
+          display: true,
+          text: "Value",
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+      },
     },
   };
   return (
