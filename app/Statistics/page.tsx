@@ -19,8 +19,9 @@ import { Day, Hour, WeatherApiResponse } from "@/type/types";
 import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
 import { useDegree } from "@/components/context/TemperatureContext";
-import { PressureUnit, Temperature } from "@/type/symbol";
+import { PrecipitationUnit, PressureUnit, Temperature } from "@/type/symbol";
 import { usePressure } from "@/components/context/PressureContext";
+import { usePrecipitation } from "@/components/context/PrecipitationUnit";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
@@ -31,6 +32,7 @@ const Statistics = () => {
   const { location } = useLocation();
   const { degree, setDegree } = useDegree();
   const { pressure, setPressure } = usePressure();
+  const { precipitation, setPrecipitation } = usePrecipitation();
   const [forecastData, setForecastData] = useState<WeatherApiResponse | null>(
     null
   );
@@ -115,8 +117,10 @@ const Statistics = () => {
   );
 
   const chartDataPrecipitation = generateChartData(
-    "Precipitation (mm)",
-    "precip_mm"
+    precipitation === PrecipitationUnit.INCH
+      ? "Precipitation (inch)"
+      : "Precipitation (mm)",
+    precipitation === PrecipitationUnit.INCH ? "precip_in" : "precip_mm"
   );
 
   const chartDataCloud = generateChartData("Cloud", "cloud");
@@ -169,6 +173,17 @@ const Statistics = () => {
             }}
           >
             {pressure}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              precipitation === PrecipitationUnit.INCH
+                ? setPrecipitation(PrecipitationUnit.MM)
+                : setPrecipitation(PrecipitationUnit.INCH);
+            }}
+          >
+            {precipitation}
           </Button>
 
           <Select
