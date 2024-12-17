@@ -15,7 +15,7 @@ import {
 import { fetchForecastWeather } from "@/lib/fetchData";
 import { chartTypes } from "@/type/chartTypes";
 import { Day, Hour, WeatherApiResponse } from "@/type/types";
-import { formatTime } from "@/utils/function";
+import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
 
 const Statistics = () => {
@@ -76,58 +76,37 @@ const Statistics = () => {
     fetchAllForecastWeather();
   }, [WEATHER_API_URL, location]);
 
-  // Separate chart data for different parameters
-  const chartDataFeelsLike = {
-    labels: hourlyData.map((item) => formatTime(item.time)),
-    datasets: [
-      {
-        label: "Feels Like Temperature (°C)",
-        data: hourlyData.map((item) => item.feelslike_c),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
+  const generateChartData = (label: string, dataKey: keyof Hour) => {
+    const colors = generateRandomColor();
+    return {
+      labels: hourlyData.map((item) => formatTime(item.time)),
+      datasets: [
+        {
+          label,
+          data: hourlyData.map((item) => item[dataKey]),
+          backgroundColor: colors.backgroundColor,
+          borderColor: colors.borderColor,
+          borderWidth: 1,
+        },
+      ],
+    };
   };
 
-  const chartDataWindSpeed = {
-    labels: hourlyData.map((item) => formatTime(item.time)),
-    datasets: [
-      {
-        label: "Wind Speed (mph)",
-        data: hourlyData.map((item) => item.wind_mph),
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  const chartDataFeelsLike = generateChartData(
+    "Feels Like Temperature (°C)",
+    "feelslike_c"
+  );
 
-  const chartDataHumidity = {
-    labels: hourlyData.map((item) => formatTime(item.time)),
-    datasets: [
-      {
-        label: "Humidity (%)",
-        data: hourlyData.map((item) => item.humidity),
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  const chartDataWindSpeed = generateChartData("Wind Speed (mph)", "wind_mph");
 
-  const chartDataPrecipitation = {
-    labels: hourlyData.map((item) => formatTime(item.time)),
-    datasets: [
-      {
-        label: "Precipitation (mm)",
-        data: hourlyData.map((item) => item.precip_mm),
-        backgroundColor: "rgba(153, 102, 255, 0.6)",
-        borderColor: "rgba(153, 102, 255, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
+
+  const chartDataPrecipitation = generateChartData(
+    "Precipitation (mm)",
+    "precip_mm"
+  );
+
+  const chartDataHeatIndex = generateChartData("Heat (°C)", "heatindex_c");
 
   const chartOptions = {
     responsive: true,
@@ -137,20 +116,6 @@ const Statistics = () => {
       y: { title: { display: true, text: "Value" } },
     },
   };
-
-  const chartDataHeatIndex = {
-    labels: hourlyData.map((item) => formatTime(item.time)),
-    datasets: [
-      {
-        label: "Heat (c)",
-        data: hourlyData.map((item) => item.heatindex_c),
-        backgroundColor: "rgba(153, 102, 255, 0.6)",
-        borderColor: "rgba(153, 102, 255, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
   return (
     <div className="h-screen w-full">
       <Header />
