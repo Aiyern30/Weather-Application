@@ -30,13 +30,15 @@ import { usePressure } from "@/components/context/PressureContext";
 import { usePrecipitation } from "@/components/context/PrecipitationContext";
 import { useDistance } from "@/components/context/DistanceContext";
 import { useSpeed } from "@/components/context/SpeedContext";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
     throw new Error("WEATHER_API_URL is not defined");
   }
-
+  const { theme, setTheme } = useTheme();
   const { location } = useLocation();
   const { degree, setDegree } = useDegree();
   const { speed, setSpeed } = useSpeed();
@@ -99,8 +101,15 @@ const Statistics = () => {
     fetchAllForecastWeather();
   }, [WEATHER_API_URL, location]);
 
-  const generateChartData = (label: string, dataKey: keyof Hour) => {
-    const colors = generateRandomColor();
+  const generateChartData = (
+    label: string,
+    dataKey: keyof Hour,
+    isDarkTheme: boolean
+  ) => {
+    const colors = isDarkTheme
+      ? generateRandomColor({ darkMode: true }) // Generate darker colors for dark theme
+      : generateRandomColor({ darkMode: false }); // Generate lighter colors for light theme
+
     return {
       labels: hourlyData.map((item) => formatTime(item.time)),
       datasets: [
@@ -115,57 +124,73 @@ const Statistics = () => {
     };
   };
 
-  const chartDataFeelsLike = generateChartData(
-    degree === Temperature.DEGREE
-      ? "Feels Like Temperature (°C)"
-      : "Feels Like Temperature (°F)",
-    degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f"
-  );
-
   const chartDataWindSpeed = generateChartData(
     speed === SpeedUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
-    speed === SpeedUnit.MPH ? "wind_mph" : "wind_kph"
+    speed === SpeedUnit.MPH ? "wind_mph" : "wind_kph",
+    theme === "dark"
   );
   const chartDataGustSpeed = generateChartData(
     speed === SpeedUnit.MPH ? "Gust Speed (mph)" : "Gust Speed (kph)",
-    speed === SpeedUnit.MPH ? "gust_mph" : "gust_kph"
+    speed === SpeedUnit.MPH ? "gust_mph" : "gust_kph",
+    theme === "dark"
   );
 
   const chartDataVisible = generateChartData(
     distance === DistanceUnit.KM ? "Visibility (km)" : "Visibility (miles)",
-    distance === DistanceUnit.KM ? "vis_km" : "vis_miles"
+    distance === DistanceUnit.KM ? "vis_km" : "vis_miles",
+    theme === "dark"
   );
 
-  const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
+  const chartDataHumidity = generateChartData(
+    "Humidity (%)",
+    "humidity",
+    theme === "dark"
+  );
 
   const chartDataPressure = generateChartData(
     pressure === PressureUnit.INCH ? "Pressure (in)" : "Pressure (mb)",
-    pressure === PressureUnit.INCH ? "pressure_in" : "pressure_mb"
+    pressure === PressureUnit.INCH ? "pressure_in" : "pressure_mb",
+    theme === "dark"
   );
 
   const chartDataPrecipitation = generateChartData(
     precipitation === PrecipitationUnit.INCH
       ? "Precipitation (inch)"
       : "Precipitation (mm)",
-    precipitation === PrecipitationUnit.INCH ? "precip_in" : "precip_mm"
+    precipitation === PrecipitationUnit.INCH ? "precip_in" : "precip_mm",
+    theme === "dark"
   );
 
-  const chartDataCloud = generateChartData("Cloud", "cloud");
-  const chartDataUVIndex = generateChartData("UV Index", "uv");
+  const chartDataCloud = generateChartData("Cloud", "cloud", theme === "dark");
+  const chartDataUVIndex = generateChartData(
+    "UV Index",
+    "uv",
+    theme === "dark"
+  );
 
   const chartDataWindChill = generateChartData(
     degree === Temperature.DEGREE ? "Wind Chill (°C)" : "Wind Chill (°F)",
-    degree === Temperature.DEGREE ? "windchill_c" : "windchill_f"
+    degree === Temperature.DEGREE ? "windchill_c" : "windchill_f",
+    theme === "dark"
   );
 
   const chartDataDewpoint = generateChartData(
     degree === Temperature.DEGREE ? "Dew Point (°C)" : "Dew Point (°F)",
-    degree === Temperature.DEGREE ? "dewpoint_c" : "dewpoint_f"
+    degree === Temperature.DEGREE ? "dewpoint_c" : "dewpoint_f",
+    theme === "dark"
   );
 
   const chartDataHeatIndex = generateChartData(
     degree === Temperature.DEGREE ? "Heat (°C)" : "Heat (°F)",
-    degree === Temperature.DEGREE ? "heatindex_c" : "heatindex_f"
+    degree === Temperature.DEGREE ? "heatindex_c" : "heatindex_f",
+    theme === "dark"
+  );
+  const chartDataFeelsLike = generateChartData(
+    degree === Temperature.DEGREE
+      ? "Feels Like Temperature (°C)"
+      : "Feels Like Temperature (°F)",
+    degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f",
+    theme === "dark"
   );
 
   const chartOptions = {
@@ -256,8 +281,14 @@ const Statistics = () => {
         </div>
         {forecastData && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto">
-              <div className="bg-white p-4 shadow rounded">
+            <div
+              className={cn(
+                "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto"
+              )}
+            >
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Feels Like Temperature</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -267,7 +298,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Wind Speed</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -277,7 +310,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Gust Speed</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -287,7 +322,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Visibility</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -297,7 +334,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Humidity</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -307,7 +346,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Precipitation</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -317,7 +358,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Heat Index</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -327,7 +370,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Pressure</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -337,7 +382,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Cloud</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -347,7 +394,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">UV Index</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -357,7 +406,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Wind Chill</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -367,7 +418,9 @@ const Statistics = () => {
                   />
                 </div>
               </div>
-              <div className="bg-white p-4 shadow rounded">
+              <div
+                className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}
+              >
                 <div className="text-center mb-4">Dew Point</div>
                 <div className="h-[300px]">
                   <ChartRenderer
