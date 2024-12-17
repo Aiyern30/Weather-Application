@@ -123,12 +123,17 @@ const Statistics = () => {
   );
 
   const chartDataWindSpeed = generateChartData(
-    distance === SpeedUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
-    distance === SpeedUnit.MPH ? "wind_mph" : "wind_kph"
+    speed === SpeedUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
+    speed === SpeedUnit.MPH ? "wind_mph" : "wind_kph"
   );
   const chartDataGustSpeed = generateChartData(
-    distance === SpeedUnit.MPH ? "Gust Speed (mph)" : "Gust Speed (kph)",
-    distance === SpeedUnit.MPH ? "gust_mph" : "gust_kph"
+    speed === SpeedUnit.MPH ? "Gust Speed (mph)" : "Gust Speed (kph)",
+    speed === SpeedUnit.MPH ? "gust_mph" : "gust_kph"
+  );
+
+  const chartDataVisible = generateChartData(
+    distance === DistanceUnit.KM ? "Visibility (km)" : "Visibility (miles)",
+    distance === DistanceUnit.KM ? "vis_km" : "vis_miles"
   );
 
   const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
@@ -146,6 +151,7 @@ const Statistics = () => {
   );
 
   const chartDataCloud = generateChartData("Cloud", "cloud");
+  const chartDataUVIndex = generateChartData("UV Index", "uv");
 
   const chartDataWindChill = generateChartData(
     degree === Temperature.DEGREE ? "Wind Chill (°C)" : "Wind Chill (°F)",
@@ -282,6 +288,16 @@ const Statistics = () => {
                 </div>
               </div>
               <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">Visibility</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataVisible}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Humidity</div>
                 <div className="h-[300px]">
                   <ChartRenderer
@@ -327,6 +343,16 @@ const Statistics = () => {
                   <ChartRenderer
                     chartType={chartType}
                     data={chartDataCloud}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow rounded">
+                <div className="text-center mb-4">UV Index</div>
+                <div className="h-[300px]">
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataUVIndex}
                     options={chartOptions}
                   />
                 </div>
