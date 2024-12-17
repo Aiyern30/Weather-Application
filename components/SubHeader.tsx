@@ -19,7 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui";
-import React, { useState } from "react";
+import React from "react";
+import { SelectButton } from "primereact/selectbutton";
 
 interface SubHeaderProps {
   setChartType: React.Dispatch<React.SetStateAction<chartTypes>>;
@@ -27,95 +28,106 @@ interface SubHeaderProps {
 }
 
 const SubHeader = ({ chartType, setChartType }: SubHeaderProps) => {
-  const chartTypes: chartTypes[] = [
-    "AREA",
-    "BAR",
-    "BUBBLE",
-    "DOUGHNUT",
-    "LINE",
-    "POLAR",
-    "RADAR",
-  ];
-
+  const chartTypes: chartTypes[] = ["AREA", "BAR", "LINE"];
   const { degree, setDegree } = useDegree();
   const { speed, setSpeed } = useSpeed();
   const { pressure, setPressure } = usePressure();
   const { precipitation, setPrecipitation } = usePrecipitation();
   const { distance, setDistance } = useDistance();
+
   return (
-    <div className="flex justify-end items-center m-3">
-      <Button
-        variant="outline"
-        onClick={() => {
-          degree === Temperature.DEGREE
-            ? setDegree(Temperature.FAHRENHEIT)
-            : setDegree(Temperature.DEGREE);
-        }}
-      >
-        {degree}
-      </Button>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 m-3 max-w-5xl mx-auto">
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">Degree</div>
+        <SelectButton
+          value={degree}
+          onChange={(e) => setDegree(e.value)}
+          options={[
+            { label: "°C", value: Temperature.DEGREE },
+            { label: "°F", value: Temperature.FAHRENHEIT },
+          ]}
+          className="mb-2 sm:mb-0 custom-select-button"
+        />
+      </div>
 
-      <Button
-        variant="outline"
-        onClick={() => {
-          speed === SpeedUnit.MPH
-            ? setSpeed(SpeedUnit.KPH)
-            : setSpeed(SpeedUnit.MPH);
-        }}
-      >
-        {speed}
-      </Button>
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">Speed</div>
+        <SelectButton
+          value={speed}
+          onChange={(e) => setSpeed(e.value)}
+          options={[
+            { label: "MPH", value: SpeedUnit.MPH },
+            { label: "KPH", value: SpeedUnit.KPH },
+          ]}
+          className="mb-2 sm:mb-0 custom-select-button"
+        />
+      </div>
 
-      <Button
-        variant="outline"
-        onClick={() => {
-          distance === DistanceUnit.KM
-            ? setDistance(DistanceUnit.MILES)
-            : setDistance(DistanceUnit.KM);
-        }}
-      >
-        {distance}
-      </Button>
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">
+          Distance
+        </div>
+        <SelectButton
+          value={distance}
+          onChange={(e) => setDistance(e.value)}
+          options={[
+            { label: "KM", value: DistanceUnit.KM },
+            { label: "MILES", value: DistanceUnit.MILES },
+          ]}
+          className="mb-2 sm:mb-0 custom-select-button"
+        />
+      </div>
 
-      <Button
-        variant="outline"
-        onClick={() => {
-          pressure === PressureUnit.INCH
-            ? setPressure(PressureUnit.MB)
-            : setPressure(PressureUnit.INCH);
-        }}
-      >
-        {pressure}
-      </Button>
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">
+          Pressure
+        </div>
+        <SelectButton
+          value={pressure}
+          onChange={(e) => setPressure(e.value)}
+          options={[
+            { label: "INCH", value: PressureUnit.INCH },
+            { label: "MB", value: PressureUnit.MB },
+          ]}
+          className="mb-2 sm:mb-0 custom-select-button"
+        />
+      </div>
 
-      <Button
-        variant="outline"
-        onClick={() => {
-          precipitation === PrecipitationUnit.INCH
-            ? setPrecipitation(PrecipitationUnit.MM)
-            : setPrecipitation(PrecipitationUnit.INCH);
-        }}
-      >
-        {precipitation}
-      </Button>
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">
+          Precipitation
+        </div>
+        <SelectButton
+          value={precipitation}
+          onChange={(e) => setPrecipitation(e.value)}
+          options={[
+            { label: "INCH", value: PrecipitationUnit.INCH },
+            { label: "MM", value: PrecipitationUnit.MM },
+          ]}
+          className="mb-2 sm:mb-0 custom-select-button"
+        />
+      </div>
 
-      <Select
-        value={chartType}
-        onValueChange={(value: chartTypes) => {
-          setChartType(value);
-        }}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Chart Type" />
-        </SelectTrigger>
-        <SelectContent>
-          {chartTypes.map((type) => (
-            <SelectItem key={type} value={type}>
-              {type}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-sm font-semibold dark:text-white mb-2">
+          Chart Type
+        </div>
+        <Select
+          value={chartType}
+          onValueChange={(value: chartTypes) => setChartType(value)}
+        >
+          <SelectTrigger className="w-full sm:w-[180px] custom-select-button">
+            <SelectValue placeholder="Chart Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {chartTypes.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };

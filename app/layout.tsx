@@ -9,6 +9,7 @@ import { PressureProvider } from "@/components/context/PressureContext";
 import { PrecipitationProvider } from "@/components/context/PrecipitationContext";
 import { DistanceProvider } from "@/components/context/DistanceContext";
 import { SpeedProvider } from "@/components/context/SpeedContext";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,8 +1,8 @@
 export type chartTypes =
   | "AREA"
   | "BAR"
-  | "BUBBLE"
-  | "DOUGHNUT"
-  | "LINE"
-  | "POLAR"
-  | "RADAR";
+  // | "BUBBLE"
+  // | "DOUGHNUT"
+  | "LINE";
+// | "POLAR"
+// | "RADAR";
