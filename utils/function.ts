@@ -13,14 +13,19 @@ export const formatTime = (datetime: string): string => {
   return date.toLocaleString(undefined, options);
 };
 
-export const generateRandomColor = () => {
-  // Generate darker colors by limiting the random range to lower values
-  const r = Math.floor(Math.random() * 128); // 0-127 (darker values)
-  const g = Math.floor(Math.random() * 128); // 0-127 (darker values)
-  const b = Math.floor(Math.random() * 128); // 0-127 (darker values)
-  const alpha = 0.6; // Transparency for the background
+export const generateRandomColor = ({
+  darkMode = false,
+}: { darkMode?: boolean } = {}) => {
+  const getRandomValue = () => Math.floor(Math.random() * 255);
+  const baseColor = darkMode ? 50 : 200; // Adjust base color for darker/lighter tones
+
+  const randomColor = `rgba(${getRandomValue()}, ${getRandomValue()}, ${getRandomValue()}, 0.8)`;
+  const adjustedColor = darkMode
+    ? `rgba(${baseColor}, ${baseColor}, ${baseColor}, 0.8)` // Darker tone
+    : `rgba(${255 - baseColor}, ${255 - baseColor}, ${255 - baseColor}, 0.8)`; // Lighter tone
+
   return {
-    backgroundColor: `rgba(${r}, ${g}, ${b}, ${alpha})`,
-    borderColor: `rgba(${r}, ${g}, ${b}, 1)`, // Solid color for the border
+    backgroundColor: randomColor,
+    borderColor: adjustedColor,
   };
 };

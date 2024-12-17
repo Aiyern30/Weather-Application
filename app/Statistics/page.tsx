@@ -30,13 +30,18 @@ import { usePressure } from "@/components/context/PressureContext";
 import { usePrecipitation } from "@/components/context/PrecipitationContext";
 import { useDistance } from "@/components/context/DistanceContext";
 import { useSpeed } from "@/components/context/SpeedContext";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { color } from "framer-motion";
+import { ChartCard } from "@/components/ChartCard";
+import SubHeader from "@/components/SubHeader";
 
 const Statistics = () => {
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
     throw new Error("WEATHER_API_URL is not defined");
   }
-
+  const { theme } = useTheme();
   const { location } = useLocation();
   const { degree, setDegree } = useDegree();
   const { speed, setSpeed } = useSpeed();
@@ -99,8 +104,15 @@ const Statistics = () => {
     fetchAllForecastWeather();
   }, [WEATHER_API_URL, location]);
 
-  const generateChartData = (label: string, dataKey: keyof Hour) => {
-    const colors = generateRandomColor();
+  const generateChartData = (
+    label: string,
+    dataKey: keyof Hour,
+    isDarkTheme: boolean
+  ) => {
+    const colors = isDarkTheme
+      ? generateRandomColor({ darkMode: true }) // Generate darker colors for dark theme
+      : generateRandomColor({ darkMode: false }); // Generate lighter colors for light theme
+
     return {
       labels: hourlyData.map((item) => formatTime(item.time)),
       datasets: [
@@ -115,270 +127,159 @@ const Statistics = () => {
     };
   };
 
-  const chartDataFeelsLike = generateChartData(
-    degree === Temperature.DEGREE
-      ? "Feels Like Temperature (°C)"
-      : "Feels Like Temperature (°F)",
-    degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f"
-  );
-
   const chartDataWindSpeed = generateChartData(
     speed === SpeedUnit.MPH ? "Wind Speed (mph)" : "Wind Speed (kph)",
-    speed === SpeedUnit.MPH ? "wind_mph" : "wind_kph"
+    speed === SpeedUnit.MPH ? "wind_mph" : "wind_kph",
+    theme === "dark"
   );
   const chartDataGustSpeed = generateChartData(
     speed === SpeedUnit.MPH ? "Gust Speed (mph)" : "Gust Speed (kph)",
-    speed === SpeedUnit.MPH ? "gust_mph" : "gust_kph"
+    speed === SpeedUnit.MPH ? "gust_mph" : "gust_kph",
+    theme === "dark"
   );
 
   const chartDataVisible = generateChartData(
     distance === DistanceUnit.KM ? "Visibility (km)" : "Visibility (miles)",
-    distance === DistanceUnit.KM ? "vis_km" : "vis_miles"
+    distance === DistanceUnit.KM ? "vis_km" : "vis_miles",
+    theme === "dark"
   );
 
-  const chartDataHumidity = generateChartData("Humidity (%)", "humidity");
+  const chartDataHumidity = generateChartData(
+    "Humidity (%)",
+    "humidity",
+    theme === "dark"
+  );
 
   const chartDataPressure = generateChartData(
     pressure === PressureUnit.INCH ? "Pressure (in)" : "Pressure (mb)",
-    pressure === PressureUnit.INCH ? "pressure_in" : "pressure_mb"
+    pressure === PressureUnit.INCH ? "pressure_in" : "pressure_mb",
+    theme === "dark"
   );
 
   const chartDataPrecipitation = generateChartData(
     precipitation === PrecipitationUnit.INCH
       ? "Precipitation (inch)"
       : "Precipitation (mm)",
-    precipitation === PrecipitationUnit.INCH ? "precip_in" : "precip_mm"
+    precipitation === PrecipitationUnit.INCH ? "precip_in" : "precip_mm",
+    theme === "dark"
   );
 
-  const chartDataCloud = generateChartData("Cloud", "cloud");
-  const chartDataUVIndex = generateChartData("UV Index", "uv");
+  const chartDataCloud = generateChartData("Cloud", "cloud", theme === "dark");
+  const chartDataUVIndex = generateChartData(
+    "UV Index",
+    "uv",
+    theme === "dark"
+  );
 
   const chartDataWindChill = generateChartData(
     degree === Temperature.DEGREE ? "Wind Chill (°C)" : "Wind Chill (°F)",
-    degree === Temperature.DEGREE ? "windchill_c" : "windchill_f"
+    degree === Temperature.DEGREE ? "windchill_c" : "windchill_f",
+    theme === "dark"
   );
 
   const chartDataDewpoint = generateChartData(
     degree === Temperature.DEGREE ? "Dew Point (°C)" : "Dew Point (°F)",
-    degree === Temperature.DEGREE ? "dewpoint_c" : "dewpoint_f"
+    degree === Temperature.DEGREE ? "dewpoint_c" : "dewpoint_f",
+    theme === "dark"
   );
 
   const chartDataHeatIndex = generateChartData(
     degree === Temperature.DEGREE ? "Heat (°C)" : "Heat (°F)",
-    degree === Temperature.DEGREE ? "heatindex_c" : "heatindex_f"
+    degree === Temperature.DEGREE ? "heatindex_c" : "heatindex_f",
+    theme === "dark"
   );
+  const chartDataFeelsLike = generateChartData(
+    degree === Temperature.DEGREE
+      ? "Feels Like Temperature (°C)"
+      : "Feels Like Temperature (°F)",
+    degree === Temperature.DEGREE ? "feelslike_c" : "feelslike_f",
+    theme === "dark"
+  );
+
+  const charts = [
+    { title: "Feels Like Temperature", data: chartDataFeelsLike },
+    { title: "Wind Speed", data: chartDataWindSpeed },
+    { title: "Gust Speed", data: chartDataGustSpeed },
+    { title: "Visibility", data: chartDataVisible },
+    { title: "Humidity", data: chartDataHumidity },
+    { title: "Precipitation", data: chartDataPrecipitation },
+    { title: "Heat Index", data: chartDataHeatIndex },
+    { title: "Pressure", data: chartDataPressure },
+    { title: "Cloud", data: chartDataCloud },
+    { title: "UV Index", data: chartDataUVIndex },
+    { title: "Wind Chill", data: chartDataWindChill },
+    { title: "Dew Point", data: chartDataDewpoint },
+  ];
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        labels: {
+          color: theme === "dark" ? "white" : "black",
+        },
+      },
+    },
+
     scales: {
-      x: { title: { display: true, text: "Time" } },
-      y: { title: { display: true, text: "Value" } },
+      x: {
+        ticks: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+        title: {
+          display: true,
+          text: "Time",
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+      },
+      y: {
+        ticks: {
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+        title: {
+          display: true,
+          text: "Value",
+          color:
+            theme === "dark"
+              ? "rgba(255, 255, 255, 0.8)"
+              : "rgba(0, 0, 0, 0.8)",
+        },
+      },
     },
   };
   return (
     <div className="h-screen w-full">
       <Header />
       <div className="p-5">
-        <div className="flex justify-end items-center m-3">
-          <Button
-            variant="outline"
-            onClick={() => {
-              degree === Temperature.DEGREE
-                ? setDegree(Temperature.FAHRENHEIT)
-                : setDegree(Temperature.DEGREE);
-            }}
-          >
-            {degree}
-          </Button>
+        <SubHeader />
 
-          <Button
-            variant="outline"
-            onClick={() => {
-              speed === SpeedUnit.MPH
-                ? setSpeed(SpeedUnit.KPH)
-                : setSpeed(SpeedUnit.MPH);
-            }}
-          >
-            {speed}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              distance === DistanceUnit.KM
-                ? setDistance(DistanceUnit.MILES)
-                : setDistance(DistanceUnit.KM);
-            }}
-          >
-            {distance}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              pressure === PressureUnit.INCH
-                ? setPressure(PressureUnit.MB)
-                : setPressure(PressureUnit.INCH);
-            }}
-          >
-            {pressure}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => {
-              precipitation === PrecipitationUnit.INCH
-                ? setPrecipitation(PrecipitationUnit.MM)
-                : setPrecipitation(PrecipitationUnit.INCH);
-            }}
-          >
-            {precipitation}
-          </Button>
-
-          <Select
-            value={chartType}
-            onValueChange={(value: chartTypes) => {
-              setChartType(value);
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Chart Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {chartTypes.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
         {forecastData && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto">
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Feels Like Temperature</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataFeelsLike}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Wind Speed</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataWindSpeed}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Gust Speed</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataGustSpeed}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Visibility</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataVisible}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Humidity</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataHumidity}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Precipitation</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataPrecipitation}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Heat Index</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataHeatIndex}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Pressure</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataPressure}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Cloud</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataCloud}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">UV Index</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataUVIndex}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Wind Chill</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataWindChill}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-              <div className="bg-white p-4 shadow rounded">
-                <div className="text-center mb-4">Dew Point</div>
-                <div className="h-[300px]">
-                  <ChartRenderer
-                    chartType={chartType}
-                    data={chartDataDewpoint}
-                    options={chartOptions}
-                  />
-                </div>
-              </div>
-            </div>
-          </>
+          <div
+            className={cn(
+              "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto"
+            )}
+          >
+            {charts.map((chart, index) => (
+              <ChartCard
+                key={index}
+                title={chart.title}
+                chartType={chartType}
+                data={chart.data}
+                options={chartOptions}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
