@@ -116,10 +116,10 @@ const SubHeader = ({ chartType, setChartType }: SubHeaderProps) => {
           value={chartType}
           onValueChange={(value: chartTypes) => setChartType(value)}
         >
-          <SelectTrigger className="w-full sm:w-[180px] custom-select-button">
+          <SelectTrigger className="w-full sm:w-[180px] bg-white text-black">
             <SelectValue placeholder="Chart Type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white text-black">
             {chartTypes.map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
