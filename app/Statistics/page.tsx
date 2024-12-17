@@ -1,9 +1,17 @@
 "use client";
 
 import BarChart from "@/components/charts/Bar";
+import ChartRenderer from "@/components/charts/ChartRenderer";
 import LineChart from "@/components/charts/Line";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/locationContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
 import { fetchForecastWeather } from "@/lib/fetchData";
 import { chartTypes } from "@/type/chartTypes";
 import { Day, Hour, WeatherApiResponse } from "@/type/types";
@@ -22,6 +30,15 @@ const Statistics = () => {
   );
   const [hourlyData, setHourlyData] = useState<Hour[]>([]);
   const [chartType, setChartType] = useState<chartTypes>("LINE");
+  const chartTypes: chartTypes[] = [
+    "AREA",
+    "BAR",
+    "BUBBLE",
+    "DOUGHNUT",
+    "LINE",
+    "POLAR",
+    "RADAR",
+  ];
 
   useEffect(() => {
     const fetchAllForecastWeather = async () => {
@@ -138,106 +155,75 @@ const Statistics = () => {
     <div className="h-screen w-full">
       <Header />
       <div className="p-5">
+        <div className="flex justify-end m-3">
+          <Select
+            onValueChange={(value: chartTypes) => {
+              setChartType(value);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Chart Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {chartTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {forecastData && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto">
               <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Feels Like Temperature</div>
                 <div className="h-[300px]">
-                  {chartType === "BAR" ? (
-                    <BarChart
-                      data={chartDataFeelsLike}
-                      options={chartOptions}
-                    />
-                  ) : chartType === "LINE" ? (
-                    <LineChart
-                      data={chartDataFeelsLike}
-                      options={chartOptions}
-                    />
-                  ) : (
-                    <BarChart
-                      data={chartDataFeelsLike}
-                      options={chartOptions}
-                    />
-                  )}
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataFeelsLike}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
               <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Wind Speed</div>
                 <div className="h-[300px]">
-                  {chartType === "BAR" ? (
-                    <BarChart
-                      data={chartDataWindSpeed}
-                      options={chartOptions}
-                    />
-                  ) : chartType === "LINE" ? (
-                    <LineChart
-                      data={chartDataWindSpeed}
-                      options={chartOptions}
-                    />
-                  ) : (
-                    <BarChart
-                      data={chartDataWindSpeed}
-                      options={chartOptions}
-                    />
-                  )}
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataWindSpeed}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
               <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Humidity</div>
                 <div className="h-[300px]">
-                  {chartType === "BAR" ? (
-                    <BarChart data={chartDataHumidity} options={chartOptions} />
-                  ) : chartType === "LINE" ? (
-                    <LineChart
-                      data={chartDataHumidity}
-                      options={chartOptions}
-                    />
-                  ) : (
-                    <BarChart data={chartDataHumidity} options={chartOptions} />
-                  )}
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataHumidity}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
               <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Precipitation</div>
                 <div className="h-[300px]">
-                  {chartType === "BAR" ? (
-                    <BarChart
-                      data={chartDataPrecipitation}
-                      options={chartOptions}
-                    />
-                  ) : chartType === "LINE" ? (
-                    <LineChart
-                      data={chartDataPrecipitation}
-                      options={chartOptions}
-                    />
-                  ) : (
-                    <BarChart
-                      data={chartDataPrecipitation}
-                      options={chartOptions}
-                    />
-                  )}
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataPrecipitation}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
               <div className="bg-white p-4 shadow rounded">
                 <div className="text-center mb-4">Heat Index</div>
                 <div className="h-[300px]">
-                  {chartType === "BAR" ? (
-                    <BarChart
-                      data={chartDataHeatIndex}
-                      options={chartOptions}
-                    />
-                  ) : chartType === "LINE" ? (
-                    <LineChart
-                      data={chartDataHeatIndex}
-                      options={chartOptions}
-                    />
-                  ) : (
-                    <BarChart
-                      data={chartDataHeatIndex}
-                      options={chartOptions}
-                    />
-                  )}
+                  <ChartRenderer
+                    chartType={chartType}
+                    data={chartDataHeatIndex}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
             </div>
