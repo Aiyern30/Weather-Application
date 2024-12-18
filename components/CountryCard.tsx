@@ -23,7 +23,7 @@ const WeatherCardGrid = ({
   setLocation,
 }: WeatherCardGridProps) => {
   const router = useRouter();
-
+  console.log(additionalWeatherData);
   return (
     <>
       {Object.entries(additionalWeatherData).map(([country, data]) => (
