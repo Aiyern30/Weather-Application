@@ -20,7 +20,7 @@ import {
   Checkbox,
 } from "@/components/ui";
 import WeatherIcon from "@/app/WeatherIcon";
-import { AirQuality, WeatherApiResponse } from "@/type/types";
+import { AirQuality, CurrentWeather, WeatherApiResponse } from "@/type/types";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/context/locationContext";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ import { fetchAllCountries } from "@/lib/fetchCountry";
 import { Country } from "@/type/country";
 import { useToast } from "@/hooks/use-toast";
 type CountryWeatherData = {
-  current: any;
+  current: CurrentWeather | null;
   forecast: any;
   airQuality: any;
   imageUrl: string | null;
@@ -58,6 +58,7 @@ export default function Home() {
   const [additionalWeatherData, setAdditionalWeatherData] = useState<
     Record<string, CountryWeatherData>
   >({});
+
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
     if (typeof window !== "undefined") {
@@ -421,15 +422,21 @@ export default function Home() {
                 <span className="font-bold text-lg">{country}</span>
               </div>
               <div className="flex flex-col items-center justify-center h-full w-full bg-black bg-opacity-40 p-4">
-                <div className="text-white text-xl font-bold">
-                  {data.current.temp_c}°C
-                </div>
-                <div className="text-white text-sm mt-1">
-                  UV Index: {data.current.uv}
-                </div>
-                <div className="text-white text-sm mt-1">
-                  Humidity: {data.current.humidity}%
-                </div>
+                {!data.current ? (
+                  <div>Loading...</div>
+                ) : (
+                  <>
+                    <div className="text-white text-xl font-bold">
+                      {data.current.temp_c}°C
+                    </div>
+                    <div className="text-white text-sm mt-1">
+                      UV Index: {data.current.uv}
+                    </div>
+                    <div className="text-white text-sm mt-1">
+                      Humidity: {data.current.humidity}%
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ))}
