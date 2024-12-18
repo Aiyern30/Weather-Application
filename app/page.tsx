@@ -56,6 +56,7 @@ export default function Home() {
   >({});
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  console.log("selectedCountries", selectedCountries);
 
   const handleCheckboxChange = (code: string) => {
     setSelectedCountries((prev) =>
@@ -76,7 +77,7 @@ export default function Home() {
         console.log("Error fetching country");
       }
     };
-    fetchCountryData();
+
     const fetchAllWeatherData = async (query: string) => {
       try {
         const currentResponse = await fetch(
@@ -106,58 +107,57 @@ export default function Home() {
       }
     };
 
-    const fetchWeatherDataForCountries = async (country: string) => {
-      try {
-        const currentResponse = await fetch(
-          `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
-        );
-        if (!currentResponse.ok) throw new Error("Location not found");
-        const currentData = await currentResponse.json();
+    const fetchWeatherDataForCountries = async (countries: string[]) => {
+      for (const country of countries) {
+        try {
+          const currentResponse = await fetch(
+            `${WEATHER_API_URL}/v1/current.json?key=f1250c5c92844d20a8d104804240104&q=${country}&aqi=yes`
+          );
+          if (!currentResponse.ok) throw new Error("Location not found");
+          const currentData = await currentResponse.json();
 
-        const forecastResponse = await fetch(
-          `${WEATHER_API_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${country}&days=1&aqi=yes&alerts=no`
-        );
-        if (!forecastResponse.ok) throw new Error("Forecast not found");
-        const forecastData = await forecastResponse.json();
+          const forecastResponse = await fetch(
+            `${WEATHER_API_URL}/v1/forecast.json?key=f1250c5c92844d20a8d104804240104&q=${country}&days=1&aqi=yes&alerts=no`
+          );
+          if (!forecastResponse.ok) throw new Error("Forecast not found");
+          const forecastData = await forecastResponse.json();
 
-        const imageUrl = await fetchUnsplashImage(country);
+          const imageUrl = await fetchUnsplashImage(country);
 
-        // Store current, forecast, air quality, and image
-        setAdditionalWeatherData((prevData) => ({
-          ...prevData,
-          [country]: {
-            current: currentData.current,
-            forecast: forecastData.forecast,
-            airQuality: currentData.current.air_quality,
-            imageUrl: imageUrl || null,
-          },
-        }));
-      } catch (error) {
-        console.error(`Error fetching weather for ${country}:`, error);
-        setAdditionalWeatherData((prevData) => ({
-          ...prevData,
-          [country]: {
-            current: null,
-            forecast: null,
-            airQuality: null,
-            imageUrl: null,
-          },
-        }));
+          setAdditionalWeatherData((prevData) => ({
+            ...prevData,
+            [country]: {
+              current: currentData.current,
+              forecast: forecastData.forecast,
+              airQuality: currentData.current.air_quality,
+              imageUrl: imageUrl || null,
+            },
+          }));
+        } catch (error) {
+          console.error(`Error fetching weather for ${country}:`, error);
+          setAdditionalWeatherData((prevData) => ({
+            ...prevData,
+            [country]: {
+              current: null,
+              forecast: null,
+              airQuality: null,
+              imageUrl: null,
+            },
+          }));
+        }
       }
     };
 
-    fetchAllWeatherData(location);
+    fetchCountryData();
 
-    const countries = [
-      "South Korea",
-      "China",
-      "United States",
-      "Japan",
-      "Singapore",
-      "France",
-    ];
-    countries.forEach((country) => fetchWeatherDataForCountries(country));
-  }, [location]);
+    if (location) {
+      fetchAllWeatherData(location);
+    }
+
+    if (selectedCountries.length > 0) {
+      fetchWeatherDataForCountries(selectedCountries);
+    }
+  }, [location, selectedCountries]);
 
   // Fetch image from Unsplash with Axios
   const fetchUnsplashImage = async (query: string) => {
@@ -326,8 +326,8 @@ export default function Home() {
                   >
                     <Checkbox
                       id={country.code}
-                      checked={selectedCountries.includes(country.code)}
-                      onCheckedChange={() => handleCheckboxChange(country.code)}
+                      checked={selectedCountries.includes(country.name)}
+                      onCheckedChange={() => handleCheckboxChange(country.name)}
                     />
                     <label
                       htmlFor={country.code}
