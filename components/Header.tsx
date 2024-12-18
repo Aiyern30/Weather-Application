@@ -193,7 +193,7 @@ const Header = () => {
         <div className="flex flex-col md:flex-row w-full md:w-1/2 gap-2 relative items-center">
           <Input
             type="text"
-            className="w-full sm:w-full md:w-auto font-body"
+            className="w-full sm:w-full font-body"
             placeholder="Search Your Location"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
