@@ -17,14 +17,15 @@ type CountryWeatherData = {
 
 interface WeatherCardGridProps {
   additionalWeatherData: Record<string, CountryWeatherData>;
+  selectedCountries: string[];
   setLocation: (country: string) => void;
 }
 const WeatherCardGrid = ({
   additionalWeatherData,
+  selectedCountries,
   setLocation,
 }: WeatherCardGridProps) => {
   const router = useRouter();
-  console.log(additionalWeatherData);
   return (
     <>
       {Object.entries(additionalWeatherData).map(([country, data]) => (
