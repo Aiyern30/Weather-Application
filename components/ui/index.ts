@@ -14,5 +14,5 @@ export * from "./Select";
 export * from "./Sheet";
 export * from "./Table";
 export * from "./Tabs";
-export * from "./Toast";
-export * from "./Toaster";
+export * from "./toast";
+export * from "./toaster";
