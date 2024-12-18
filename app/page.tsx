@@ -33,6 +33,8 @@ type CountryWeatherData = {
   imageUrl: string | null;
 };
 export default function Home() {
+  const LOCAL_STORAGE_KEY = "selectedCountries";
+
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
     throw new Error("WEATHER_API_URL is not defined");
@@ -55,8 +57,24 @@ export default function Home() {
     Record<string, CountryWeatherData>
   >({});
   const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  console.log("selectedCountries", selectedCountries);
+  // Set initial state from localStorage if available, else default to an empty array
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedCountries = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedCountries ? JSON.parse(savedCountries) : [];
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    // Save selected countries to localStorage whenever they change
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify(selectedCountries)
+      );
+    }
+  }, [selectedCountries]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
