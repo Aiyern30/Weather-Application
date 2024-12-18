@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import ChartRenderer from "./charts/ChartRenderer";
 import { chartTypes } from "@/type/chartTypes";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui";
 
 interface ChartCardProps {
   title: string;
@@ -15,10 +15,12 @@ export const ChartCard = ({
   data,
   options,
 }: ChartCardProps) => (
-  <div className={cn("bg-white dark:bg-[#4A4A4A] p-4 shadow rounded")}>
-    <div className="text-center mb-4">{title}</div>
-    <div className="h-[300px]">
+  <Card className="dark:bg-[#4A4A4A]">
+    <CardHeader>
+      <CardTitle className="text-center">{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="h-[300px]">
       <ChartRenderer chartType={chartType} data={data} options={options} />
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 );
