@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Avatar,
@@ -46,7 +46,7 @@ export default function Home() {
   const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(
     null
   );
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [locationImage, setLocationImage] = useState<string | null>(null);
@@ -58,6 +58,28 @@ export default function Home() {
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   console.log("selectedCountries", selectedCountries);
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredCountries = useMemo(() => {
+    // Filter countries based on search query
+    const searchResults = countries.filter(
+      (country) =>
+        country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        selectedCountries.includes(country.name)
+    );
+    // Ensure selected countries are included even if they don't match the query
+    const uniqueCountries = Array.from(
+      new Set([
+        ...searchResults,
+        ...countries.filter((country) =>
+          selectedCountries.includes(country.name)
+        ),
+      ])
+    );
+    return uniqueCountries;
+  }, [countries, searchQuery, selectedCountries]);
   const handleCheckboxChange = (code: string) => {
     setSelectedCountries((prev) =>
       prev.includes(code)
@@ -319,7 +341,17 @@ export default function Home() {
             </SelectTrigger>
             <SelectContent>
               <div className="space-y-2 p-2">
-                {countries.map((country) => (
+                <Input
+                  type="text"
+                  className="w-full sm:w-full font-body"
+                  placeholder="Search Countries"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && handleSearch(searchQuery)
+                  }
+                />
+                {filteredCountries.map((country) => (
                   <div
                     key={country.code}
                     className="flex items-center space-x-2"
