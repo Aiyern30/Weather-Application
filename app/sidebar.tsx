@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   FaHome,
@@ -20,6 +20,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
 
   const handleClick = () => setOpen(!open);
   const handleDarkModeToggle = () =>
@@ -56,6 +57,7 @@ const Sidebar = () => {
           className={`transition-opacity duration-300 ${
             open ? "block" : "hidden"
           }`}
+          onClick={() => router.push("/")}
         >
           Breezy Forecast
         </motion.span>
@@ -67,6 +69,7 @@ const Sidebar = () => {
           className={`transition-opacity duration-300 ${
             !open ? "block" : "hidden"
           }`}
+          onClick={() => router.push("/")}
         >
           BF
         </motion.span>
