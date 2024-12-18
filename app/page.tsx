@@ -26,6 +26,7 @@ import { useLocation } from "@/components/context/locationContext";
 import { useRouter } from "next/navigation";
 import { fetchAllCountries } from "@/lib/fetchCountry";
 import { Country } from "@/type/country";
+import { useToast } from "@/hooks/use-toast";
 type CountryWeatherData = {
   current: any;
   forecast: any;
@@ -34,6 +35,7 @@ type CountryWeatherData = {
 };
 export default function Home() {
   const LOCAL_STORAGE_KEY = "selectedCountries";
+  const { toast } = useToast();
 
   const WEATHER_API_URL = process.env.NEXT_PUBLIC_WEATHER_API_URL;
   if (!WEATHER_API_URL) {
@@ -57,7 +59,6 @@ export default function Home() {
     Record<string, CountryWeatherData>
   >({});
   const [countries, setCountries] = useState<Country[]>([]);
-  // Set initial state from localStorage if available, else default to an empty array
   const [selectedCountries, setSelectedCountries] = useState<string[]>(() => {
     if (typeof window !== "undefined") {
       const savedCountries = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -98,12 +99,22 @@ export default function Home() {
     );
     return uniqueCountries;
   }, [countries, searchQuery, selectedCountries]);
-  const handleCheckboxChange = (code: string) => {
-    setSelectedCountries((prev) =>
-      prev.includes(code)
-        ? prev.filter((item) => item !== code)
-        : [...prev, code]
-    );
+  const handleCheckboxChange = (countryName: string) => {
+    if (selectedCountries.includes(countryName)) {
+      setSelectedCountries((prev) =>
+        prev.filter((item) => item !== countryName)
+      );
+    } else {
+      if (selectedCountries.length >= 20) {
+        toast({
+          title: "Selection Limit Reached",
+          description: "You can only select up to 20 countries.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setSelectedCountries((prev) => [...prev, countryName]);
+    }
   };
 
   const router = useRouter();
