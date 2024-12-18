@@ -12,4 +12,7 @@ export * from "./Input";
 export * from "./Label";
 export * from "./Select";
 export * from "./Sheet";
-export * from "./Skeleton";
+export * from "./Table";
+export * from "./Tabs";
+export * from "./Toast";
+export * from "./Toaster";

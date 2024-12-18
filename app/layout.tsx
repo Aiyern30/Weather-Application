@@ -10,6 +10,7 @@ import { PrecipitationProvider } from "@/components/context/PrecipitationContext
 import { DistanceProvider } from "@/components/context/DistanceContext";
 import { SpeedProvider } from "@/components/context/SpeedContext";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import { Toaster } from "@/components/ui";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,6 +41,7 @@ export default function RootLayout({
                     <SpeedProvider>
                       <Sidebar />
                       <div className="flex-1 overflow-auto">{children}</div>
+                      <Toaster />
                     </SpeedProvider>
                   </DistanceProvider>
                 </PrecipitationProvider>
