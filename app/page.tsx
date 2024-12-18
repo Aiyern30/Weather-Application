@@ -12,12 +12,20 @@ import {
   CardTitle,
   CardDescription,
   Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Checkbox,
 } from "@/components/ui";
 import WeatherIcon from "@/app/WeatherIcon";
 import { AirQuality, WeatherApiResponse } from "@/type/types";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/context/locationContext";
 import { useRouter } from "next/navigation";
+import { fetchAllCountries } from "@/lib/fetchCountry";
+import { Country } from "@/type/country";
 type CountryWeatherData = {
   current: any;
   forecast: any;
@@ -46,10 +54,29 @@ export default function Home() {
   const [additionalWeatherData, setAdditionalWeatherData] = useState<
     Record<string, CountryWeatherData>
   >({});
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+
+  const handleCheckboxChange = (code: string) => {
+    setSelectedCountries((prev) =>
+      prev.includes(code)
+        ? prev.filter((item) => item !== code)
+        : [...prev, code]
+    );
+  };
 
   const router = useRouter();
   // Fetch weather data based on location
   useEffect(() => {
+    const fetchCountryData = async () => {
+      try {
+        const fetchCountry = await fetchAllCountries();
+        setCountries(fetchCountry);
+      } catch (error) {
+        console.log("Error fetching country");
+      }
+    };
+    fetchCountryData();
     const fetchAllWeatherData = async (query: string) => {
       try {
         const currentResponse = await fetch(
@@ -286,6 +313,33 @@ export default function Home() {
       <div className="p-5">
         <div className="flex justify-between mb-4">
           <div className="text-xl font-bold">Other Large Cities</div>
+          <Select>
+            <SelectTrigger className="w-[300px]">
+              <SelectValue placeholder="Select countries" />
+            </SelectTrigger>
+            <SelectContent>
+              <div className="space-y-2 p-2">
+                {countries.map((country) => (
+                  <div
+                    key={country.code}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      id={country.code}
+                      checked={selectedCountries.includes(country.code)}
+                      onCheckedChange={() => handleCheckboxChange(country.code)}
+                    />
+                    <label
+                      htmlFor={country.code}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {country.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </SelectContent>
+          </Select>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer">
           {Object.entries(additionalWeatherData).map(([country, data]) => (
