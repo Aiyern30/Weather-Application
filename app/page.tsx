@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { fetchAllCountries } from "@/lib/fetchCountry";
 import { Country } from "@/type/country";
 import { useToast } from "@/hooks/use-toast";
+import WeatherCardGrid from "@/components/CountryCard";
 type CountryWeatherData = {
   current: CurrentWeather | null;
   forecast: Forecastday | null;
@@ -412,42 +413,10 @@ export default function Home() {
           </Select>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer">
-          {Object.entries(additionalWeatherData).map(([country, data]) => (
-            <div
-              key={country}
-              className="relative h-40 border border-gray-300 rounded-lg overflow-hidden flex flex-col items-center justify-center bg-gray-100"
-              style={{
-                backgroundImage: `url(${data.imageUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              onClick={() => {
-                router.push(`/Statistics/`);
-                setLocation(country);
-              }}
-            >
-              <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-                <span className="font-bold text-lg">{country}</span>
-              </div>
-              <div className="flex flex-col items-center justify-center h-full w-full bg-black bg-opacity-40 p-4">
-                {!data.current ? (
-                  <div>Loading...</div>
-                ) : (
-                  <>
-                    <div className="text-white text-xl font-bold">
-                      {data.current.temp_c}°C
-                    </div>
-                    <div className="text-white text-sm mt-1">
-                      UV Index: {data.current.uv}
-                    </div>
-                    <div className="text-white text-sm mt-1">
-                      Humidity: {data.current.humidity}%
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
+          <WeatherCardGrid
+            additionalWeatherData={additionalWeatherData}
+            setLocation={setLocation}
+          />
         </div>
       </div>
     </div>
