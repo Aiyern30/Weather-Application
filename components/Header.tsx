@@ -120,7 +120,7 @@ const Header = () => {
     };
 
     fetchWeather(location);
-  }, [location]);
+  }, [location, UNSPLASH_API_URL, WEATHER_API_URL, weatherData, searchQuery]);
 
   const handleSelectLocation = (location: string) => {
     setLocation(location);
