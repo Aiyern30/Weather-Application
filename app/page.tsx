@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   Avatar,
@@ -20,7 +20,12 @@ import {
   Checkbox,
 } from "@/components/ui";
 import WeatherIcon from "@/app/WeatherIcon";
-import { AirQuality, CurrentWeather, WeatherApiResponse } from "@/type/types";
+import {
+  AirQuality,
+  CurrentWeather,
+  Forecastday,
+  WeatherApiResponse,
+} from "@/type/types";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/context/locationContext";
 import { useRouter } from "next/navigation";
@@ -29,11 +34,13 @@ import { Country } from "@/type/country";
 import { useToast } from "@/hooks/use-toast";
 type CountryWeatherData = {
   current: CurrentWeather | null;
-  forecast: any;
-  airQuality: any;
+  forecast: Forecastday | null;
+  airQuality: AirQuality | null;
   imageUrl: string | null;
 };
 export default function Home() {
+  const router = useRouter();
+
   const LOCAL_STORAGE_KEY = "selectedCountries";
   const { toast } = useToast();
 
@@ -118,7 +125,21 @@ export default function Home() {
     }
   };
 
-  const router = useRouter();
+  // Fetch image from Unsplash with Axios
+  const fetchUnsplashImage = useCallback(
+    async (query: string) => {
+      try {
+        const response = await axios.get(
+          `${UNSPLASH_API_URL}/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`
+        );
+        return response.data.results[0]?.urls?.regular || null;
+      } catch (error) {
+        console.error("Error fetching image from Unsplash:", error);
+        return null;
+      }
+    },
+    [UNSPLASH_API_URL]
+  );
   // Fetch weather data based on location
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -209,20 +230,7 @@ export default function Home() {
     if (selectedCountries.length > 0) {
       fetchWeatherDataForCountries(selectedCountries);
     }
-  }, [location, selectedCountries]);
-
-  // Fetch image from Unsplash with Axios
-  const fetchUnsplashImage = async (query: string) => {
-    try {
-      const response = await axios.get(
-        `${UNSPLASH_API_URL}/search/photos?query=${query}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`
-      );
-      return response.data.results[0]?.urls?.regular || null;
-    } catch (error) {
-      console.error("Error fetching image from Unsplash:", error);
-      return null;
-    }
-  };
+  }, [location, selectedCountries, WEATHER_API_URL, fetchUnsplashImage]);
 
   return (
     <div className="h-screen w-full">
