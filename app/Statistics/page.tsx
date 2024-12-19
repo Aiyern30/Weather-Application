@@ -1,21 +1,10 @@
 "use client";
 
-import BarChart from "@/components/charts/Bar";
-import ChartRenderer from "@/components/charts/ChartRenderer";
-import LineChart from "@/components/charts/Line";
 import Header from "@/components/Header";
 import { useLocation } from "@/components/context/locationContext";
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui";
 import { fetchForecastWeather } from "@/lib/fetchData";
 import { chartTypes } from "@/type/chartTypes";
-import { Day, Hour, WeatherApiResponse } from "@/type/types";
+import { Hour, WeatherApiResponse } from "@/type/types";
 import { formatTime, generateRandomColor } from "@/utils/function";
 import React, { useEffect, useState } from "react";
 import { useDegree } from "@/components/context/TemperatureContext";
@@ -32,7 +21,6 @@ import { useDistance } from "@/components/context/DistanceContext";
 import { useSpeed } from "@/components/context/SpeedContext";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import { color } from "framer-motion";
 import { ChartCard } from "@/components/ChartCard";
 import SubHeader from "@/components/SubHeader";
 
@@ -43,11 +31,11 @@ const Statistics = () => {
   }
   const { theme } = useTheme();
   const { location } = useLocation();
-  const { degree, setDegree } = useDegree();
-  const { speed, setSpeed } = useSpeed();
-  const { pressure, setPressure } = usePressure();
-  const { precipitation, setPrecipitation } = usePrecipitation();
-  const { distance, setDistance } = useDistance();
+  const { degree } = useDegree();
+  const { speed } = useSpeed();
+  const { pressure } = usePressure();
+  const { precipitation } = usePrecipitation();
+  const { distance } = useDistance();
   const [forecastData, setForecastData] = useState<WeatherApiResponse | null>(
     null
   );
@@ -102,8 +90,8 @@ const Statistics = () => {
     isDarkTheme: boolean
   ) => {
     const colors = isDarkTheme
-      ? generateRandomColor({ darkMode: true }) // Darker colors for dark theme
-      : generateRandomColor({ darkMode: false }); // Lighter colors for light theme
+      ? generateRandomColor({ darkMode: true })
+      : generateRandomColor({ darkMode: false });
 
     const fillConfig =
       chartType === "AREA"

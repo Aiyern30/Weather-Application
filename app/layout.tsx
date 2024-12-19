@@ -11,12 +11,22 @@ import { DistanceProvider } from "@/components/context/DistanceContext";
 import { SpeedProvider } from "@/components/context/SpeedContext";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { Toaster } from "@/components/ui";
+import breezy_logo from "@/public/Breezy-logo.jpg";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Home",
-  description: "developed by Ian Gan",
+export const generateMetadata = async (): Promise<Metadata> => {
+  // You can fetch profile data here if needed
+  const websiteName = "Breezy Forecast"; // Or fetch from your API/context
+  const name = "";
+
+  return {
+    title: `${websiteName}${name ? " | " + name : ""}`,
+    description: "Developed by Ian Gan",
+    icons: {
+      icon: [{ url: breezy_logo.src, type: "image/jpg" }],
+    },
+  };
 };
 
 export default function RootLayout({
