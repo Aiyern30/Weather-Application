@@ -40,8 +40,6 @@ type CountryWeatherData = {
   imageUrl: string | null;
 };
 export default function Home() {
-  const router = useRouter();
-
   const LOCAL_STORAGE_KEY = "selectedCountries";
   const { toast } = useToast();
 
