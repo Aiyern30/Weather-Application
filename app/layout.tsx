@@ -11,13 +11,12 @@ import { DistanceProvider } from "@/components/context/DistanceContext";
 import { SpeedProvider } from "@/components/context/SpeedContext";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { Toaster } from "@/components/ui";
-import breezy_logo from "@/public/Breezy-logo.jpg";
+import breezy_logo from "@/public/Breezy-Logo.png";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  // You can fetch profile data here if needed
-  const websiteName = "Breezy Forecast"; // Or fetch from your API/context
+  const websiteName = "Breezy Forecast";
   const name = "";
 
   return {

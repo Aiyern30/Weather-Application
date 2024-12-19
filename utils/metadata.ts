@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 // utils/metadata.ts
-const iconUrl = "/Breezy-logo.jpg";
+const iconUrl = "/Breezy-Logo.png";
 
 export const generatePageMetadata = (
   title: string,
