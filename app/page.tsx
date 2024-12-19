@@ -76,6 +76,8 @@ export default function Home() {
     return [];
   });
 
+  console.log("selectedCountries", selectedCountries);
+
   useEffect(() => {
     // Save selected countries to localStorage whenever they change
     if (typeof window !== "undefined") {
@@ -109,21 +111,33 @@ export default function Home() {
     return uniqueCountries;
   }, [countries, searchQuery, selectedCountries]);
   const handleCheckboxChange = (countryName: string) => {
-    if (selectedCountries.includes(countryName)) {
-      setSelectedCountries((prev) =>
-        prev.filter((item) => item !== countryName)
-      );
-    } else {
-      if (selectedCountries.length >= 20) {
-        toast({
-          title: "Selection Limit Reached",
-          description: "You can only select up to 20 countries.",
-          variant: "destructive",
+    setSelectedCountries((prev) => {
+      if (prev.includes(countryName)) {
+        const updatedSelectedCountries = prev.filter(
+          (item) => item !== countryName
+        );
+
+        setAdditionalWeatherData((prevData) => {
+          const updatedData = { ...prevData };
+          delete updatedData[countryName];
+          return updatedData;
         });
-        return;
+
+        return updatedSelectedCountries;
+      } else {
+        // Add country to selected list
+        if (prev.length >= 20) {
+          toast({
+            title: "Selection Limit Reached",
+            description: "You can only select up to 20 countries.",
+            variant: "destructive",
+          });
+          return prev;
+        }
+
+        return [...prev, countryName];
       }
-      setSelectedCountries((prev) => [...prev, countryName]);
-    }
+    });
   };
 
   // Fetch image from Unsplash with Axios
@@ -415,6 +429,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 cursor-pointer">
           <WeatherCardGrid
             additionalWeatherData={additionalWeatherData}
+            selectedCountries={selectedCountries}
             setLocation={setLocation}
           />
         </div>
