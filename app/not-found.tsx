@@ -8,7 +8,7 @@ const UnauthorizedPage = () => {
   const router = useRouter();
 
   const handleBack = () => {
-    router.push("/invoices/expenses");
+    router.push("/");
   };
 
   return (
