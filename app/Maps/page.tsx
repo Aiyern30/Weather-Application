@@ -162,7 +162,7 @@ const Page = () => {
       {/* Only render the MapComponent if coords are available */}
       {coords ? (
         activeTab === "Google" ? (
-          <GoogleMaps />
+          <GoogleMaps lat={coords.lat} lon={coords.lon} />
         ) : (
           <MapComponent lat={coords.lat} lon={coords.lon} />
         )
