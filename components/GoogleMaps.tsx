@@ -23,7 +23,7 @@ const GoogleMaps = () => {
 
   const mapContainerStyle = {
     width: "100%",
-    height: "700px",
+    height: "100vh",
   };
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
