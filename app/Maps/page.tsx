@@ -12,20 +12,28 @@ import {
   SelectValue,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { styles } from "@/utils/mapStyle";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
 });
 
-const defaultCoords = { lat: 4.2105, lon: 101.9758 }; // Default coordinates for Malaysia
+const defaultCoords = { lat: 4.2105, lon: 101.9758 };
 
 const Page = () => {
+  const [mapStyle, setMapStyle] = useState<google.maps.MapTypeStyle[]>(
+    styles.default
+  );
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(
     defaultCoords
   );
+
+  const handleMapStyleChange = (style: string) => {
+    setMapStyle(styles[style]);
+  };
   const [activeTab, setActiveTab] = useState("Google");
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState("Malaysia");
@@ -109,6 +117,22 @@ const Page = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
+        {activeTab === "Google" && (
+          <Select onValueChange={(value) => handleMapStyleChange(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a map style" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="silver">Silver</SelectItem>
+                <SelectItem value="night">Night</SelectItem>
+                <SelectItem value="retro">Retro</SelectItem>
+                <SelectItem value="hiding">Hiding</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       <h1 className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 bg-white px-4 py-2 rounded-lg shadow-md text-black">
@@ -173,7 +197,7 @@ const Page = () => {
       {/* Only render the MapComponent if coords are available */}
       {coords ? (
         activeTab === "Google" ? (
-          <GoogleMaps lat={coords.lat} lon={coords.lon} />
+          <GoogleMaps lat={coords.lat} lon={coords.lon} mapStyle={mapStyle} />
         ) : (
           <MapComponent lat={coords.lat} lon={coords.lon} />
         )

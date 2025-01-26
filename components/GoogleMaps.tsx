@@ -5,11 +5,10 @@ import { useLoadScript } from "@react-google-maps/api"; // No need to import Lib
 interface GoogleMapsProps {
   lat: number;
   lon: number;
+  mapStyle: google.maps.MapTypeStyle[];
 }
 
-const libraries: string[] = ["places", "drawing", "geometry", "visualization"]; // Use string[] instead of Library[]
-
-const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon }) => {
+const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
   const GoogleMapAPI = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
 
   if (!GoogleMapAPI) {
@@ -29,20 +28,20 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon }) => {
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: GoogleMapAPI,
-    // libraries, // Use string[] for libraries
+    libraries: ["places", "drawing", "geometry", "visualization"],
   });
 
   useEffect(() => {
     setCenter({ lat, lng: lon });
-    setMapKey(Date.now()); // Force map refresh when lat or lon changes
+    setMapKey(Date.now());
   }, [lat, lon]);
 
   const onMapUnmount = () => {
-    setCenter({ lat, lng: lon }); // Ensure the map center is updated when it is unmounted
+    setCenter({ lat, lng: lon });
   };
 
   const handleRefresh = () => {
-    setMapKey(Date.now()); // Change the key to force a re-mount
+    setMapKey(Date.now());
   };
 
   if (loadError) {
@@ -91,7 +90,7 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon }) => {
 
   return (
     <GoogleMap
-      key={mapKey} // Changing the key forces a re-mount
+      key={mapKey}
       mapContainerStyle={mapContainerStyle}
       center={center}
       zoom={zoom}
@@ -100,6 +99,7 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon }) => {
         streetViewControl: false,
         disableDefaultUI: false,
         mapTypeId: "roadmap",
+        styles: mapStyle,
       }}
     >
       <MarkerF position={center} />
