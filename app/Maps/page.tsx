@@ -119,7 +119,7 @@ const Page = () => {
         </Select>
         {activeTab === "Google" && (
           <Select
-            value="default"
+            value={Object.keys(styles).find((key) => styles[key] === mapStyle)}
             onValueChange={(value) => handleMapStyleChange(value)}
           >
             <SelectTrigger className="w-[180px]">
@@ -133,6 +133,8 @@ const Page = () => {
                 <SelectItem value="retro">Retro</SelectItem>
                 <SelectItem value="Dark">Dark</SelectItem>
                 <SelectItem value="Aubergine">Aubergine</SelectItem>
+                <SelectItem value="Vintage">Vintage</SelectItem>
+                <SelectItem value="Avocado">Avocado</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
