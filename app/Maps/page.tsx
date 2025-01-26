@@ -95,9 +95,12 @@ const Page = () => {
   return (
     <div className="relative">
       <div className="absolute top-4 right-20 z-10 flex items-center justify-center space-x-5">
-        <Select onValueChange={(value) => setActiveTab(value)}>
+        <Select
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value)}
+        >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a maps" defaultValue={activeTab} />
+            <SelectValue placeholder="Select a map" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
