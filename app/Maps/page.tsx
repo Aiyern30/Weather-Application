@@ -118,7 +118,10 @@ const Page = () => {
           </SelectContent>
         </Select>
         {activeTab === "Google" && (
-          <Select onValueChange={(value) => handleMapStyleChange(value)}>
+          <Select
+            value="default"
+            onValueChange={(value) => handleMapStyleChange(value)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a map style" />
             </SelectTrigger>
@@ -128,7 +131,8 @@ const Page = () => {
                 <SelectItem value="silver">Silver</SelectItem>
                 <SelectItem value="night">Night</SelectItem>
                 <SelectItem value="retro">Retro</SelectItem>
-                <SelectItem value="hiding">Hiding</SelectItem>
+                <SelectItem value="Dark">Dark</SelectItem>
+                <SelectItem value="Aubergine">Aubergine</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

@@ -278,15 +278,37 @@ export const styles: Record<string, google.maps.MapTypeStyle[]> = {
       stylers: [{ color: "#92998d" }],
     },
   ],
-  hiding: [
+  Dark: [
+    { elementType: "geometry", stylers: [{ color: "#212121" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
+
+    { elementType: "labels.text.font", stylers: [{ fontFamily: "inherit" }] },
     {
-      featureType: "poi.business",
-      stylers: [{ visibility: "off" }],
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#3e3e3e" }],
     },
     {
-      featureType: "transit",
-      elementType: "labels.icon",
-      stylers: [{ visibility: "off" }],
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#0f0f0f" }],
+    },
+  ],
+
+  Aubergine: [
+    { elementType: "geometry", stylers: [{ color: "#2c3e50" }] },
+    { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#ecf0f1" }] },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#34495e" }],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#34495e" }],
     },
   ],
 };
