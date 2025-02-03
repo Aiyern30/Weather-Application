@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className="flex h-screen overflow-hidden dark:bg-[#1E1E1E] bg-white">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

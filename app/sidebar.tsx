@@ -115,7 +115,7 @@ const Sidebar = () => {
       {/* Toggle button for sidebar */}
       <motion.button
         className={cn(
-          "absolute top-1/2 transform -translate-y-1/2 dark:bg-[#4A4A4A] bg-gray-300 dark:text-white text-black p-2 rounded-full transition-transform",
+          "z-50 absolute top-1/2 transform -translate-y-1/2 dark:bg-[#4A4A4A] bg-gray-300 dark:text-white text-black p-2 rounded-full transition-transform",
           open ? "-right-4" : "-right-4"
         )}
         onClick={handleClick}

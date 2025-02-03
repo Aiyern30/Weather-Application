@@ -330,7 +330,7 @@ export default function Home() {
                         value: `${weatherData?.current.pressure_mb || 0} mb`,
                       },
                       {
-                        src: "/Weather/visibility.gif",
+                        src: "/Weather/Visibility.gif",
                         label: "VISIBILITY",
                         value: `${weatherData?.current.vis_km || 0} km`,
                       },

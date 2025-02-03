@@ -1,19 +1,40 @@
 "use client";
-import { Input } from "@/components/ui";
+import GoogleMaps from "@/components/GoogleMaps";
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
+import { cn } from "@/lib/utils";
+import { styles } from "@/utils/mapStyle";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 
 const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
 });
 
-const defaultCoords = { lat: 4.2105, lon: 101.9758 }; // Default coordinates for Malaysia
+const defaultCoords = { lat: 4.2105, lon: 101.9758 };
 
 const Page = () => {
+  const [mapStyle, setMapStyle] = useState<google.maps.MapTypeStyle[]>(
+    styles.default
+  );
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(
     defaultCoords
   );
+
+  const handleMapStyleChange = (style: string) => {
+    setMapStyle(styles[style]);
+  };
+  const [activeTab, setActiveTab] = useState("Google");
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState("Malaysia");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -81,6 +102,45 @@ const Page = () => {
 
   return (
     <div className="relative">
+      <div className="absolute top-4 right-20 z-10 flex items-center justify-center space-x-5">
+        <Select
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select a map" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="Google">Google Maps</SelectItem>
+              <SelectItem value="Reatlef">Reatlef</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {activeTab === "Google" && (
+          <Select
+            value={Object.keys(styles).find((key) => styles[key] === mapStyle)}
+            onValueChange={(value) => handleMapStyleChange(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a map style" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="silver">Silver</SelectItem>
+                <SelectItem value="night">Night</SelectItem>
+                <SelectItem value="retro">Retro</SelectItem>
+                <SelectItem value="Dark">Dark</SelectItem>
+                <SelectItem value="Aubergine">Aubergine</SelectItem>
+                <SelectItem value="Vintage">Vintage</SelectItem>
+                <SelectItem value="Avocado">Avocado</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        )}
+      </div>
+
       <h1 className="absolute top-5 left-1/2 transform -translate-x-1/2 z-10 bg-white px-4 py-2 rounded-lg shadow-md text-black">
         Map Page - {location}
       </h1>
@@ -142,7 +202,11 @@ const Page = () => {
 
       {/* Only render the MapComponent if coords are available */}
       {coords ? (
-        <MapComponent lat={coords.lat} lon={coords.lon} />
+        activeTab === "Google" ? (
+          <GoogleMaps lat={coords.lat} lon={coords.lon} mapStyle={mapStyle} />
+        ) : (
+          <MapComponent lat={coords.lat} lon={coords.lon} />
+        )
       ) : (
         <p>Enter a location to view its map.</p>
       )}
