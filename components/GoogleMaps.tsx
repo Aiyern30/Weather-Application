@@ -50,26 +50,15 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
     setMapKey(Date.now());
   };
 
-  const handleMarkerClick = (marker: GoogleMapMarker) => {
+  const handleMarkerClick = (latitude: number, longitude: number) => {
     if (infoWindowRef.current) {
       infoWindowRef.current.close();
     }
 
-    // Safely access marker.link properties
-    const linkHref = marker.link?.href || "#";
-    const linkLabel = marker.link?.label || "";
-
     // The contentString now contains inline styles for the buttons
     const contentString = `
   <div style="max-width: 300px; padding: 10px;" id="google-maps">
-    <div style="font-size: 18px; font-weight: bold; color: #333; margin-bottom: 8px;">${marker.label}</div>
-    <div style="font-size: 14px; color: #555; margin-bottom: 8px;">${marker.description}</div>
-    <button
-      id="navigate-link"
-      style="background: none; border: none; cursor: pointer; font-size: 14px; color: blue; text-decoration: underline; margin-top: 8px;"
-    >
-      ${linkLabel}
-    </button>
+    
     <div style="margin-top: 12px;">
       <button
         id="open-in-google-maps"
@@ -89,12 +78,12 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
 
     // Set the marker position
     const position = {
-      lat: Number(marker.latitude),
-      lng: Number(marker.longitude),
+      lat: Number(latitude),
+      lng: Number(longitude),
     };
 
     setCenter(position);
-    setZoom(marker.focusLevel || 8);
+    setZoom(8);
 
     if (mapRef.current) {
       const infoWindow = new google.maps.InfoWindow({
@@ -118,15 +107,10 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
       const openInGoogleMaps = document.getElementById("open-in-google-maps");
       const copyCoordinates = document.getElementById("copy-coordinates");
 
-      // Event listener for "Navigate Link"
-      if (navigateLink) {
-        navigateLink.addEventListener("click", () => router.push(linkHref));
-      }
-
       // Event listener for "Open in Google Maps"
       if (openInGoogleMaps) {
         openInGoogleMaps.addEventListener("click", () => {
-          const googleMapsUrl = `https://www.google.com/maps?q=${marker.latitude},${marker.longitude}`;
+          const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
           window.open(googleMapsUrl, "_blank");
         });
       }
@@ -135,7 +119,7 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
       if (copyCoordinates) {
         copyCoordinates.addEventListener("click", () => {
           navigator.clipboard
-            .writeText(`${marker.latitude}, ${marker.longitude}`)
+            .writeText(`${latitude}, ${longitude}`)
             .then(() => {
               toast({
                 variant: "default",
@@ -212,6 +196,7 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
       center={center}
       zoom={zoom}
       onUnmount={onMapUnmount}
+      // onLoad={onload}
       options={{
         streetViewControl: false,
         disableDefaultUI: false,
@@ -219,7 +204,7 @@ const GoogleMaps: React.FC<GoogleMapsProps> = ({ lat, lon, mapStyle }) => {
         styles: mapStyle,
       }}
     >
-      <MarkerF position={center} />
+      <MarkerF position={center} onClick={(e) => handleMarkerClick(lat, lon)} />
     </GoogleMap>
   );
 };
